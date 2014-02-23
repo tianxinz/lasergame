@@ -31,7 +31,7 @@ MenuScreen::MenuScreen()
 	buttonManager.addButton("play",std::make_shared<UserButton>(playButton));
 	buttonManager.addButton("quit",std::make_shared<UserButton>(quitButton));
 
-	if(!backTexture.loadFromFile("Background/Capture.PNG")) 
+	if(!backTexture.loadFromFile("Background/background.png")) 
 	{
 		std::cout << "Error: could not load grid image!" << std::endl;
 	}

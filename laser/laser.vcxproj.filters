@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\Background">
       <UniqueIdentifier>{ea04f0fb-fb2c-4281-b475-7a77ed22990c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Equipments_Image">
+      <UniqueIdentifier>{a6150a26-bcd8-4f93-9444-43f620d8c6f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -130,23 +133,23 @@
     <None Include="Background\block.png">
       <Filter>Resource Files\Background</Filter>
     </None>
-    <None Include="Background\Capture.PNG">
-      <Filter>Resource Files\Background</Filter>
-    </None>
     <None Include="Level\level_equipment_1.txt">
       <Filter>Resource Files\Level</Filter>
     </None>
-    <None Include="LaserSource.png">
-      <Filter>Resource Files</Filter>
+    <None Include="Background\background.png">
+      <Filter>Resource Files\Background</Filter>
     </None>
-    <None Include="Mirror.png">
-      <Filter>Resource Files</Filter>
+    <None Include="Equipments_Image\LaserSource.png">
+      <Filter>Resource Files\Equipments_Image</Filter>
     </None>
-    <None Include="Target.png">
-      <Filter>Resource Files</Filter>
+    <None Include="Equipments_Image\Mirror.png">
+      <Filter>Resource Files\Equipments_Image</Filter>
     </None>
-    <None Include="Target_Hit.png">
-      <Filter>Resource Files</Filter>
+    <None Include="Equipments_Image\Target.png">
+      <Filter>Resource Files\Equipments_Image</Filter>
+    </None>
+    <None Include="Equipments_Image\Target_Hit.png">
+      <Filter>Resource Files\Equipments_Image</Filter>
     </None>
   </ItemGroup>
 </Project>

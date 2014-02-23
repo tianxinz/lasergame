@@ -117,16 +117,16 @@
     <ClInclude Include="Screen.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Background\background.png" />
     <None Include="Background\block.png" />
-    <None Include="Background\Capture.PNG" />
+    <None Include="Equipments_Image\LaserSource.png" />
+    <None Include="Equipments_Image\Mirror.png" />
+    <None Include="Equipments_Image\Target.png" />
+    <None Include="Equipments_Image\Target_Hit.png" />
     <None Include="Images\play.png" />
     <None Include="Images\quit.png" />
-    <None Include="LaserSource.png" />
     <None Include="Level\level_equipment_1.txt" />
     <None Include="level_1.txt" />
-    <None Include="Mirror.png" />
-    <None Include="Target.png" />
-    <None Include="Target_Hit.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

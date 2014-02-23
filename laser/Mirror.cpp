@@ -7,7 +7,7 @@
 Mirror::Mirror()
 {
 
-	if(!eTexture.loadFromFile("Mirror.png"))
+	if(!eTexture.loadFromFile("Equipments_Image/Mirror.png"))
 	{
 		std::cout << "Error: could not load mirror image!" << std::endl;
 	}

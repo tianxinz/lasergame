@@ -7,7 +7,7 @@
 
 LaserSource::LaserSource()
 {
-	if(!eTexture.loadFromFile("LaserSource.png"))
+	if(!eTexture.loadFromFile("Equipments_Image/LaserSource.png"))
 	{
 		std::cout << "Error: could not load Laser Source image!" << std::endl;
 	}
