@@ -49,25 +49,40 @@ void ToolManager::update(sf::RenderWindow& window)
 		}
 	}
 
-			if( !sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if( !sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if(ToolManager::state == 1)
+		{
+			unsigned int x = sf::Mouse::getPosition(window).x;
+			unsigned int y = sf::Mouse::getPosition(window).y;
+			if(x>20&&x<620&&y>20&&y<500)
 			{
-				if(ToolManager::state == 1)
-				{
-					unsigned int x = sf::Mouse::getPosition(window).x;
-					unsigned int y = sf::Mouse::getPosition(window).y;
-					if(x>20&&x<620&&y>20&&y<500)
-					{
-						int row = (y-MARGIN)/BLOCK_SIZE;
-						int col = (x-MARGIN)/BLOCK_SIZE;
-						std::shared_ptr<Equipment> new_equipment;
-						(ToolManager::copy_equipment)->clone(new_equipment);
-						ToolManager::equipments_on_grid_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
-					}
-
-				}
-				ToolManager::setState(0);
-					
+				int row = (y-MARGIN)/BLOCK_SIZE;
+				int col = (x-MARGIN)/BLOCK_SIZE;
+				std::shared_ptr<Equipment> new_equipment;
+				(ToolManager::copy_equipment)->clone(new_equipment);
+				ToolManager::equipments_on_grid_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
 			}
+
+		}
+		ToolManager::setState(0);
+					
+	}
+
+	if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
+	{
+		std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = ToolManager::equipments_on_grid_.begin();
+		for(; it_on_grid!=ToolManager::equipments_on_grid_.end(); it_on_grid ++)
+		{
+			if((*it_on_grid).second->getGlobalBounds().intersects(mouseBounds_))
+			{
+				(*it_on_grid).second->rotate();
+			}
+
+		}
+	}
+
+
 }
 
 // display the equipment, equipment itself can display

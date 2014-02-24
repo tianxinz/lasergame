@@ -105,7 +105,7 @@ void GameScreen::loadEquipment()
 
 void GameScreen::drawEquitment(sf::RenderWindow& window)
 {	
-	std::map<std::string, std::shared_ptr<Equipment>>::iterator it = tool_manager.equipments_.begin();
+		std::map<std::string, std::shared_ptr<Equipment>>::iterator it = tool_manager.equipments_.begin();
 		for(; it!= tool_manager.equipments_.end(); it++)
 		{
 			window.draw(*((*it).second));
@@ -118,7 +118,6 @@ void GameScreen::drawEquitment(sf::RenderWindow& window)
 			int y = (*it_on_grid).first - GRID_WIDTH*x;
 			((*it_on_grid).second)->setPosition((float)(2*MARGIN+y*(BLOCK_SIZE)), (float)(2*MARGIN+x*(BLOCK_SIZE)));
 			window.draw(*((*it_on_grid).second));
-
 		}
 }
 
