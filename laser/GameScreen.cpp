@@ -30,6 +30,12 @@ void GameScreen::render(sf::RenderWindow& window)
 {
 	drawGrid(window);
 	drawEquitment(window);
+	if( GameScreen::tool_manager.getState() == 1)
+	{
+		window.draw(*(GameScreen::tool_manager.getCopyEquipment()));
+
+	}
+
 }
 
 void GameScreen::update(sf::Time delta)
@@ -103,6 +109,16 @@ void GameScreen::drawEquitment(sf::RenderWindow& window)
 		for(; it!= tool_manager.equipments_.end(); it++)
 		{
 			window.draw(*((*it).second));
+		}
+
+		std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = tool_manager.equipments_on_grid_.begin();
+		for(; it_on_grid!=tool_manager.equipments_on_grid_.end(); it_on_grid ++)
+		{
+			int x = (*it_on_grid).first/GRID_WIDTH;
+			int y = (*it_on_grid).first - GRID_WIDTH*x;
+			((*it_on_grid).second)->setPosition((float)(2*MARGIN+y*(BLOCK_SIZE)), (float)(2*MARGIN+x*(BLOCK_SIZE)));
+			window.draw(*((*it_on_grid).second));
+
 		}
 }
 

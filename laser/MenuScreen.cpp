@@ -25,9 +25,9 @@ MenuScreen::MenuScreen()
 	playButton.callBack = &my_callBack_play;
 	//quitButton.callBack = &void my_callBack_quit;
 
-	playButton.setPosition(Game::Width/2 - playButton.getSize().x * 2,Game::Height/2 - playButton.getSize().y/2);
+	playButton.setPosition(float(Game::Width/2 - playButton.getSize().x * 2),float(Game::Height/2 - playButton.getSize().y/2));
 
-	quitButton.setPosition(Game::Width/2 - quitButton.getSize().x/4,  Game::Height/2 - playButton.getSize().y/2);
+	quitButton.setPosition(float(Game::Width/2 - quitButton.getSize().x/4),  float(Game::Height/2 - playButton.getSize().y/2));
 	buttonManager.addButton("play",std::make_shared<UserButton>(playButton));
 	buttonManager.addButton("quit",std::make_shared<UserButton>(quitButton));
 

@@ -20,12 +20,22 @@ public:
 
 	void addEquipment(const std::string& id, std::shared_ptr<Equipment>& equipment);
 	void removeEquipment(const std::string& id);
+    int getState();
+	void setState(int state);
+
+	std::shared_ptr<Equipment> getCopyEquipment();
+	void setCopyEquipment(std::shared_ptr<Equipment>& new_copy);
+
 	std::map<std::string,  std::shared_ptr<Equipment>> equipments_;
 	//std::vector<std::shared_ptr<Equipment>> equipments_on_grid_;
 	std::map<int, std::shared_ptr<Equipment>> equipments_on_grid_;
 
+
+
 private:
 	sf::FloatRect mouseBounds_;
+	int state;
+	std::shared_ptr<Equipment> copy_equipment;
 
 };
 
