@@ -14,8 +14,9 @@ ToolManager::ToolManager()
 
 void ToolManager::update(sf::RenderWindow& window)
 {
-	mouseBounds_.left = sf::Mouse::getPosition(window).x;
-	mouseBounds_.top = sf::Mouse::getPosition(window).y;
+	
+	mouseBounds_.left = (float)sf::Mouse::getPosition(window).x;
+	mouseBounds_.top = (float)sf::Mouse::getPosition(window).y;
 
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
@@ -25,7 +26,45 @@ void ToolManager::update(sf::RenderWindow& window)
 			if((*it).second->getGlobalBounds().intersects(mouseBounds_))
 			{
 				//clone a equipment
+				//std::shared_ptr<Equipment> new_e;
+								
+				/*sf::Image img = window.capture();
+				sf::Texture curr_texture;
+				curr_texture.loadFromImage(img);
+				sf::Sprite curr_sprite;
+				curr_sprite.setTexture(curr_texture);
+				*/
 
+				//std::shared_ptr<Equipment> new_equipment;
+				//((*it).second)->clone(new_equipment);
+				
+				sf::RenderTexture rt;
+				rt.create(800,600);
+
+				
+				while(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				{
+
+					std::shared_ptr<Equipment> new_equipment;
+				    ((*it).second)->clone(new_equipment);
+					new_equipment->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
+					//window.clear();
+					//window.draw(curr_sprite);
+					//window.draw(*new_equipment);
+					//window.display();
+					rt.clear();
+					rt.draw(*new_equipment);
+					//rt.display();
+					sf::Texture texture = rt.getTexture();
+					sf::Sprite sprite(texture);
+					window.draw(sprite);
+					//window.display();
+					
+
+
+										
+				}
+				
 
 				//move
 

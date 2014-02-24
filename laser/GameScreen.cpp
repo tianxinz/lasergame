@@ -16,11 +16,13 @@
 
 GameScreen::GameScreen()
 {
+	//put all the equipments needed in this level.
 	loadEquipment();
 }
 
 void GameScreen::handleInput(sf::RenderWindow& window)
 {
+	//handle the 
 	GameScreen::tool_manager.update(window);
 }
 

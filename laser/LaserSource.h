@@ -13,7 +13,8 @@ class LaserSource : public Equipment
 public:
 	LaserSource();
 	void setColor(sf::Color myCol);
-	void reaction(Photon &photon);
+	void clone(std::shared_ptr<Equipment>& copy_ptr) override;
+	void reaction(Photon &photon) override;
 	Photon getPhoton(float rad);
 };
 

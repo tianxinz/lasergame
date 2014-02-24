@@ -15,11 +15,17 @@ Target::Target()
 	isHit = false;
 	setTexture(eTexture);
 }
+
+void Target::clone(std::shared_ptr<Equipment>& copy_ptr)
+{
+
+}
+
 void Target::reaction(Photon& photon)
 {
 	photon.setVelocity(0.0);
 	isHit = true;
-	if(!eTexture.loadFromFile("Target_Hit.png"))
+	if(!eTexture.loadFromFile("Equipments_Image/Target_Hit.png"))
 	{
 		std::cout << "Error: could not load Laser Source image!" << std::endl;
 	}

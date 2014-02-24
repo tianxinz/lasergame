@@ -13,8 +13,10 @@ class Target : public Equipment
 public:
 	Target();
 	bool isSuccess();
-	void reaction(Photon &photon);
+	void reaction(Photon &photon) override;
+	void clone(std::shared_ptr<Equipment>& copy_ptr) override;
 	void setColor(sf::Color myCol);
+
 };
 
 #endif

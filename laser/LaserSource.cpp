@@ -14,6 +14,10 @@ LaserSource::LaserSource()
 	col = sf::Color::Red;
 	setTexture(eTexture);
 }
+
+void LaserSource::clone(std::shared_ptr<Equipment>& copy_ptr)
+{
+}
 void LaserSource::reaction(Photon& photon)
 {
 	photon.setVelocity(0.0);
@@ -28,5 +32,6 @@ Photon LaserSource::getPhoton(float rad)
 {
 	float angle = getRotation();
 	Photon startP(col, rad, angle);
+	startP.setPosition(LaserSource::getPosition());
 	return startP;
 }

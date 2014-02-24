@@ -6,15 +6,19 @@
 
 Mirror::Mirror()
 {
-
 	if(!eTexture.loadFromFile("Equipments_Image/Mirror.png"))
 	{
 		std::cout << "Error: could not load mirror image!" << std::endl;
 	}
 	setTexture(eTexture);
-
-
 }
+
+void Mirror::clone(std::shared_ptr<Equipment>& copy_ptr)
+{
+	Mirror new_mirror = *this;
+	copy_ptr = std::make_shared<Mirror>(new_mirror);
+}
+
 void Mirror::reaction(Photon& photon)
 {
 	float mAngle = getRotation();
@@ -32,11 +36,3 @@ void Mirror::reaction(Photon& photon)
 		photon.setVelocity(0.0);
 	}
 }
-/*
-
-void Mirror::render(sf::RenderWindow& window)
-{
-	//sprite_equipment.setTexture(eTexture);
-	//window.draw();
-}
-*/
