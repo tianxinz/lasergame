@@ -11,6 +11,7 @@ ToolManager::ToolManager()
 	mouseBounds_.width = 1.f;
 	mouseBounds_.height = 1.f;
 	state = 0;
+	state_right = 0;
 }
 
 void ToolManager::update(sf::RenderWindow& window)
@@ -21,7 +22,59 @@ void ToolManager::update(sf::RenderWindow& window)
 
 	if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		std::map<std::string, std::shared_ptr<Equipment>>::iterator it = equipments_.begin();
+		if(ToolManager::getState() == 0)
+		{
+			//check if the equipments on the toolbar is been selected
+			std::map<std::string, std::shared_ptr<Equipment>>::iterator it = equipments_.begin();
+			for(; it!= equipments_.end(); it++)
+			{
+				if((*it).second->getGlobalBounds().intersects(mouseBounds_))
+				{
+					std::shared_ptr<Equipment> new_equipment;
+					((*it).second)->clone(new_equipment);
+					ToolManager::setCopyEquipment(new_equipment);
+					//new_equipment->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
+					ToolManager::setState(1);
+					break;
+				}
+			}
+
+			//check if the equipment on the grid is selected
+			std::map<int, std::shared_ptr<Equipment>>::iterator it_grid = equipments_on_grid_move_.begin();
+			int flag_find = 0;
+			for(; it_grid!= equipments_on_grid_move_.end(); it_grid++)
+			{
+				if(ToolManager::getState() == 1)
+					break;
+
+				if((*it_grid).second->getGlobalBounds().intersects(mouseBounds_))
+				{
+					ToolManager::setCopyEquipment((*it_grid).second);
+					//(*it_grid).second->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
+					ToolManager::setState(2);
+					flag_find = 1;
+					break;
+				}
+
+			}
+			if(flag_find == 1)
+			{
+				int key = (*it_grid).first;
+				equipments_on_grid_move_.erase(key);
+				equipments_on_grid_.erase(key);
+
+			}
+
+
+		}
+
+		if(ToolManager::getState() == 1 || ToolManager::getState() == 2)
+		{
+			ToolManager::getCopyEquipment()->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
+		}
+
+		//check if the equipments on the toolbar is been selected
+		/*std::map<std::string, std::shared_ptr<Equipment>>::iterator it = equipments_.begin();
 		for(; it!= equipments_.end(); it++)
 		{
 			if((*it).second->getGlobalBounds().intersects(mouseBounds_) || ToolManager::getState() == 1)
@@ -47,11 +100,36 @@ void ToolManager::update(sf::RenderWindow& window)
 
 			}
 		}
+
+		//check if the equipment on the grid is selected
+		std::map<int, std::shared_ptr<Equipment>>::iterator it_grid = equipments_on_grid_move_.begin();
+		for(; it_grid!= equipments_on_grid_move_.end(); it++)
+		{
+			if((*it_grid).second->getGlobalBounds().intersects(mouseBounds_) || ToolManager::getState() == 1)
+			{
+							
+				if(ToolManager::getState() == 0)
+				{
+					ToolManager::setCopyEquipment((*it_grid).second);
+					(*it_grid).second->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
+					ToolManager::setState(1);
+				}
+				
+				if(ToolManager::getState() == 1)
+				{
+					 ToolManager::getCopyEquipment()->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
+				}
+
+
+			}
+		}
+
+		*/
 	}
 
 	if( !sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		if(ToolManager::state == 1)
+		if(ToolManager::state == 1 || ToolManager::state == 2)
 		{
 			unsigned int x = sf::Mouse::getPosition(window).x;
 			unsigned int y = sf::Mouse::getPosition(window).y;
@@ -62,27 +140,51 @@ void ToolManager::update(sf::RenderWindow& window)
 				std::shared_ptr<Equipment> new_equipment;
 				(ToolManager::copy_equipment)->clone(new_equipment);
 				ToolManager::equipments_on_grid_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
+				ToolManager::equipments_on_grid_move_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
 			}
 
 		}
+
+		/*if(ToolManager::state == 2)
+		{
+			unsigned int x = sf::Mouse::getPosition(window).x;
+			unsigned int y = sf::Mouse::getPosition(window).y;
+			if(x>20&&x<620&&y>20&&y<500)
+			{
+				int row = (y-MARGIN)/BLOCK_SIZE;
+				int col = (x-MARGIN)/BLOCK_SIZE;
+				ToolManager::getCopyEquipment()->setPosition(float(2*MARGIN + col*BLOCK_SIZE), float(2*MARGIN + row*BLOCK_SIZE)); 
+			}
+
+			else
+			{
+				//erase the equipment
+			}
+		}*/
 		ToolManager::setState(0);
 					
 	}
 
-	if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
-	{
-		std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = ToolManager::equipments_on_grid_.begin();
-		for(; it_on_grid!=ToolManager::equipments_on_grid_.end(); it_on_grid ++)
+	if(sf::Mouse::isButtonPressed(sf::Mouse::Right) || ToolManager::getStateRight() == 1)
+	{		
+		ToolManager::setStateRight(1);
+		if(!(sf::Mouse::isButtonPressed(sf::Mouse::Right)))
 		{
-			if((*it_on_grid).second->getGlobalBounds().intersects(mouseBounds_))
+			ToolManager::setStateRight(0);
+		}
+		
+		if(ToolManager::getStateRight() == 0)
+		{
+			std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = ToolManager::equipments_on_grid_.begin();
+			for(; it_on_grid!=ToolManager::equipments_on_grid_.end(); it_on_grid ++)
 			{
-				(*it_on_grid).second->rotate();
+				if((*it_on_grid).second->getGlobalBounds().intersects(mouseBounds_))
+				{	
+					(*it_on_grid).second->myRotate();
+				}
 			}
-
 		}
 	}
-
-
 }
 
 // display the equipment, equipment itself can display
@@ -111,6 +213,16 @@ void ToolManager::setState(int val)
 	ToolManager::state = val;
 }
 
+int ToolManager::getStateRight()
+{
+	return ToolManager::state_right;
+}
+
+void ToolManager::setStateRight(int val)
+{
+	ToolManager::state_right = val;
+}
+
 std::shared_ptr<Equipment> ToolManager::getCopyEquipment()
 {
 	return ToolManager::copy_equipment;
@@ -120,3 +232,4 @@ void ToolManager::setCopyEquipment(std::shared_ptr<Equipment>& new_copy)
 {
 	ToolManager::copy_equipment = new_copy;
 }
+

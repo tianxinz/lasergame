@@ -13,9 +13,14 @@ class LaserSource : public Equipment
 public:
 	LaserSource();
 	void setColor(sf::Color myCol);
-	void clone(std::shared_ptr<Equipment>& copy_ptr) override;
+	void myRotate() override; // dummy rotation function
 	void reaction(Photon &photon) override;
+	void clone(std::shared_ptr<Equipment>& ePtr) override; // dummy clone function
 	Photon getPhoton(float rad);
+	static sf::Texture lTexture;
+	static void loadTexture();
 };
+
+//LaserSource::eTexture.loadFromFile("LaserSource.png");
 
 #endif

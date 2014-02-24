@@ -5,22 +5,19 @@
 #include <vector>
 #include "Macro.h"
 #include <string.h>
+#include "Equipment.h"
+#include "LaserSource.h"
+#include "Target.h"
 
 class Grid 
 {
 	sf::Texture gridTexture;
-	sf::Texture wallTexture;
-	sf::Texture laserTexture;
-	sf::Texture poweredTexture;
-	sf::Texture bombTexture;
-	sf::Texture capTexture;
 	sf::Color gridColor;
 	std::vector<std::vector<sf::Sprite>> gridVec;
 	
 public:
 	Grid();
-	void loadGrid(std::string* layout);
-
+	void loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment>>& equipMap, std::vector<LaserSource>& my_lasers);
 	std::vector<std::vector<sf::Sprite>> getSprites();
 
 };

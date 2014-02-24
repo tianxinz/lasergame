@@ -17,6 +17,10 @@
 GameScreen::GameScreen()
 {
 	//put all the equipments needed in this level.
+
+	Mirror::loadTexture();
+	LaserSource::loadTexture();
+	Target::loadTexture();
 	loadEquipment();
 }
 
@@ -30,11 +34,46 @@ void GameScreen::render(sf::RenderWindow& window)
 {
 	drawGrid(window);
 	drawEquitment(window);
-	if( GameScreen::tool_manager.getState() == 1)
+	if( GameScreen::tool_manager.getState() == 1 || GameScreen::tool_manager.getState() == 2)
 	{
 		window.draw(*(GameScreen::tool_manager.getCopyEquipment()));
-
 	}
+	/*
+	//drawPhoton(window)
+	//{
+	sf::FloatRect windowRect(MARGIN, MARGIN, GRID_WIDTH*(BLOCK_SIZE), GRID_HEIGHT*(BLOCK_SIZE));
+		std::vector<Photon> myPhotonVec;
+		myPhotonVec.clear();
+		for(int i=0; i!=tool_manager.my_Lasers_.size(); i++)
+		{
+			myPhotonVec.push_back(tool_manager.my_Lasers_[i].getPhoton(2));
+		}
+		while(myPhotonVec.size() > 0)
+		{
+			Photon myPhoton = myPhotonVec.back();
+			myPhoton.setVelocity(1);
+			myPhotonVec.pop_back();
+			window.draw(myPhoton);
+			while(true) {
+				myPhoton.move();
+				std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = tool_manager.equipments_on_grid_.begin();
+				for(; it_on_grid!=tool_manager.equipments_on_grid_.end(); it_on_grid ++)
+				{
+					if(myPhoton.getPosition() == (*it_on_grid).second->getPosition()) {
+						(*it_on_grid).second->reaction(myPhoton);
+						break;
+					}
+				}
+
+				if(myPhoton.getVelocity() == 0.0 || !windowRect.contains(myPhoton.getPosition()))
+				{
+					break;
+				}
+				window.draw(myPhoton);
+			}
+		//}
+	
+	}*/
 
 }
 
@@ -50,7 +89,7 @@ void GameScreen::drawGrid(sf::RenderWindow& window)
 	Grid myGrid;
 	std::string* text;
 	text = loadTXT("Level/level_1.txt");
-	myGrid.loadGrid(text);
+	myGrid.loadGrid(text,GameScreen::tool_manager.equipments_on_grid_, GameScreen::tool_manager.my_Lasers_);
 	std::vector<std::vector<sf::Sprite>> gridImage = myGrid.getSprites();
 	
 	for (int i = 0; i < GRID_HEIGHT; i++) 
@@ -79,7 +118,7 @@ void GameScreen::loadEquipment()
 						Mirror mirror;
 						mirror.setPosition(750,100);
 						tool_manager.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("mirror", std::make_shared<Mirror>(mirror)));
-						tool_manager.equipments_.at("mirror")->setTexture(tool_manager.equipments_.at("mirror")->eTexture);
+						tool_manager.equipments_.at("mirror")->setTexture(Mirror::mTexture);
 						i++;
 					}
 					break;
@@ -92,7 +131,7 @@ void GameScreen::loadEquipment()
 						Target target;
 						target.setPosition(750,200);
 						tool_manager.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("target", std::make_shared<Target>(target)));
-						tool_manager.equipments_.at("target")->setTexture(tool_manager.equipments_.at("target")->eTexture);
+						tool_manager.equipments_.at("target")->setTexture(Target::tTexture);
 						i++;
 					}
 					break;
@@ -110,6 +149,7 @@ void GameScreen::drawEquitment(sf::RenderWindow& window)
 		{
 			window.draw(*((*it).second));
 		}
+
 
 		std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = tool_manager.equipments_on_grid_.begin();
 		for(; it_on_grid!=tool_manager.equipments_on_grid_.end(); it_on_grid ++)

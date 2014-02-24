@@ -4,19 +4,10 @@
 #include <iostream>
 #include <cmath>
 
+sf::Texture Mirror::mTexture;
 Mirror::Mirror()
 {
-	if(!eTexture.loadFromFile("Equipments_Image/Mirror.png"))
-	{
-		std::cout << "Error: could not load mirror image!" << std::endl;
-	}
-	setTexture(eTexture);
-}
-
-void Mirror::clone(std::shared_ptr<Equipment>& copy_ptr)
-{
-	Mirror new_mirror = *this;
-	copy_ptr = std::make_shared<Mirror>(new_mirror);
+	setTexture(Mirror::mTexture);
 }
 
 void Mirror::reaction(Photon& photon)
@@ -35,4 +26,25 @@ void Mirror::reaction(Photon& photon)
 	{
 		photon.setVelocity(0.0);
 	}
+}
+
+void Mirror::clone(std::shared_ptr<Equipment>& ePtr)
+{
+	Mirror copyMirror = *this;
+	ePtr = std::make_shared<Mirror>(copyMirror);
+	
+}
+
+void Mirror::myRotate()
+{
+	setRotation(this->getRotation()+45);
+}
+
+void Mirror::loadTexture()
+{
+	if(!(Mirror::mTexture.loadFromFile("Equipments_Image/Mirror.png")))
+	{
+		std::cout << "Error: could not load Mirror image!" << std::endl;
+	}
+
 }
