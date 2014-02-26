@@ -10,6 +10,7 @@
 
 #include "Equipment.h"
 #include "LaserSource.h"
+#include "Macro.h"
 
 class ToolManager
 {
@@ -30,11 +31,11 @@ public:
 	void setCopyEquipment(std::shared_ptr<Equipment>& new_copy);
 
 	std::map<std::string,  std::shared_ptr<Equipment>> equipments_;
-	//std::vector<std::shared_ptr<Equipment>> equipments_on_grid_;
 	std::map<int, std::shared_ptr<Equipment>> equipments_on_grid_;
 	std::map<int, std::shared_ptr<Equipment>> equipments_on_grid_move_;
-	std::vector<LaserSource> my_Lasers_;
-
+	std::vector<LaserSource> my_lasers_;
+	std::vector<Photon> my_Photons;
+	int changeIdx;
 
 
 private:

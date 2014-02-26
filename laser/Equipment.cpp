@@ -1,6 +1,7 @@
 #include "Equipment.h"
 #include "Macro.h"
 #include "Photon.h"
+#include <iostream>
 
 Equipment::Equipment()
 {

@@ -9,17 +9,27 @@ sf::Texture Target::tTexture;
 sf::Texture Target::tHitTexture;
 Target::Target()
 {
+	setOrigin(BLOCK_SIZE/2, BLOCK_SIZE/2);
 	col = sf::Color::Red;
 	isHit = false;
 	setTexture(Target::tTexture);
 
 }
 
-void Target::reaction(Photon& photon)
+void Target::reaction(Photon& photon, std::vector<std::vector<Photon>>& lightPaths)
 {
 	photon.setVelocity(0.0);
-	isHit = true;
-	setTexture(Target::tHitTexture);
+	float angle = getRotation();
+	if(angle > 0)
+	{
+		angle = 360-angle;
+	}
+	int direction = int(angle/45)+1;
+	if(direction == photon.getDirection())
+	{
+		isHit = true;
+		setTexture(Target::tHitTexture);
+	}
 }
 
 bool Target::isSuccess()

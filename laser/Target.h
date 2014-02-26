@@ -15,7 +15,7 @@ public:
 	bool isSuccess();
 	void clone(std::shared_ptr<Equipment>& ePtr) override; // dummy clone function
 	void myRotate() override; // dummy rotation function
-	void reaction(Photon &photon) override;
+	void reaction(Photon &photon, std::vector<std::vector<Photon>>& lightPaths) override;
 	void setColor(sf::Color myCol);
 	static sf::Texture tTexture;
 	static sf::Texture tHitTexture;

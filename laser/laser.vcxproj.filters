@@ -25,6 +25,9 @@
     <Filter Include="Resource Files\Equipments_Image">
       <UniqueIdentifier>{a6150a26-bcd8-4f93-9444-43f620d8c6f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\LevelScreen">
+      <UniqueIdentifier>{71b8d1dd-5e09-4654-932e-f2974d079869}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -57,9 +60,6 @@
     <ClCompile Include="Equipment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LevelManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LaserSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -70,6 +70,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelSelectScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -119,6 +125,12 @@
     <ClInclude Include="Target.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LevelSelectScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\play.png">
@@ -126,9 +138,6 @@
     </None>
     <None Include="Images\quit.png">
       <Filter>Resource Files\Images</Filter>
-    </None>
-    <None Include="level_1.txt">
-      <Filter>Resource Files\Level</Filter>
     </None>
     <None Include="Background\block.png">
       <Filter>Resource Files\Background</Filter>
@@ -150,6 +159,39 @@
     </None>
     <None Include="Equipments_Image\Target_Hit.png">
       <Filter>Resource Files\Equipments_Image</Filter>
+    </None>
+    <None Include="Level\level_1.txt">
+      <Filter>Resource Files\Level</Filter>
+    </None>
+    <None Include="Equipments_Image\Red_Light.png">
+      <Filter>Resource Files\Equipments_Image</Filter>
+    </None>
+    <None Include="Equipments_Image\splitter.png">
+      <Filter>Resource Files\Equipments_Image</Filter>
+    </None>
+    <None Include="Images\level_select.png">
+      <Filter>Resource Files\Images</Filter>
+    </None>
+    <None Include="LevelScreen\level1_button.png">
+      <Filter>Resource Files\LevelScreen</Filter>
+    </None>
+    <None Include="LevelScreen\level2_button.png">
+      <Filter>Resource Files\LevelScreen</Filter>
+    </None>
+    <None Include="LevelScreen\one_star.png">
+      <Filter>Resource Files\LevelScreen</Filter>
+    </None>
+    <None Include="LevelScreen\three_star.png">
+      <Filter>Resource Files\LevelScreen</Filter>
+    </None>
+    <None Include="LevelScreen\two_star.png">
+      <Filter>Resource Files\LevelScreen</Filter>
+    </None>
+    <None Include="LevelScreen\zero_star.png">
+      <Filter>Resource Files\LevelScreen</Filter>
+    </None>
+    <None Include="LevelScreen\lock.png">
+      <Filter>Resource Files\LevelScreen</Filter>
     </None>
   </ItemGroup>
 </Project>

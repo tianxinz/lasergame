@@ -31,7 +31,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					LaserSource myLaser;
 					myLaser.setRotation(270);
-					myLaser.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myLaser.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myLaser.setColor(sf::Color::Red);
 					my_lasers.push_back(myLaser);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<LaserSource>(myLaser)));
@@ -41,7 +41,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					LaserSource myLaser;
 					myLaser.setRotation(90);
-					myLaser.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myLaser.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myLaser.setColor(sf::Color::Red);
 					my_lasers.push_back(myLaser);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<LaserSource>(myLaser)));
@@ -51,7 +51,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					LaserSource myLaser;
 					myLaser.setRotation(180);
-					myLaser.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myLaser.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myLaser.setColor(sf::Color::Red);
 					my_lasers.push_back(myLaser);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<LaserSource>(myLaser)));
@@ -61,7 +61,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					LaserSource myLaser;
 					myLaser.setRotation(0);
-					myLaser.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myLaser.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myLaser.setColor(sf::Color::Red);
 					my_lasers.push_back(myLaser);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<LaserSource>(myLaser)));
@@ -71,7 +71,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					Target myTarget;
 					myTarget.setRotation(90);
-					myTarget.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myTarget.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myTarget.setColor(sf::Color::Red);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<Target>(myTarget)));
 					break;
@@ -80,7 +80,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					Target myTarget;
 					myTarget.setRotation(180);
-					myTarget.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myTarget.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myTarget.setColor(sf::Color::Red);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<Target>(myTarget)));
 					break;
@@ -89,7 +89,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					Target myTarget;
 					myTarget.setRotation(270);
-					myTarget.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myTarget.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myTarget.setColor(sf::Color::Red);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<Target>(myTarget)));
 					break;
@@ -98,7 +98,7 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 				{
 					Target myTarget;
 					myTarget.setRotation(0);
-					myTarget.setPosition(MARGIN+col*(BLOCK_SIZE), MARGIN+row*(BLOCK_SIZE));
+					myTarget.setPosition(2*MARGIN+col*(BLOCK_SIZE), 2*MARGIN+row*(BLOCK_SIZE));
 					myTarget.setColor(sf::Color::Red);
 					equipMap.insert(std::pair<int, std::shared_ptr<Equipment>>(row*GRID_WIDTH + col, std::make_shared<Target>(myTarget)));
 					break;

@@ -12,6 +12,7 @@ ToolManager::ToolManager()
 	mouseBounds_.height = 1.f;
 	state = 0;
 	state_right = 0;
+	changeIdx = 0;
 }
 
 void ToolManager::update(sf::RenderWindow& window)
@@ -33,7 +34,6 @@ void ToolManager::update(sf::RenderWindow& window)
 					std::shared_ptr<Equipment> new_equipment;
 					((*it).second)->clone(new_equipment);
 					ToolManager::setCopyEquipment(new_equipment);
-					//new_equipment->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
 					ToolManager::setState(1);
 					break;
 				}
@@ -50,7 +50,6 @@ void ToolManager::update(sf::RenderWindow& window)
 				if((*it_grid).second->getGlobalBounds().intersects(mouseBounds_))
 				{
 					ToolManager::setCopyEquipment((*it_grid).second);
-					//(*it_grid).second->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
 					ToolManager::setState(2);
 					flag_find = 1;
 					break;
@@ -62,6 +61,7 @@ void ToolManager::update(sf::RenderWindow& window)
 				int key = (*it_grid).first;
 				equipments_on_grid_move_.erase(key);
 				equipments_on_grid_.erase(key);
+				changeIdx  = key;
 
 			}
 
@@ -73,58 +73,6 @@ void ToolManager::update(sf::RenderWindow& window)
 			ToolManager::getCopyEquipment()->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
 		}
 
-		//check if the equipments on the toolbar is been selected
-		/*std::map<std::string, std::shared_ptr<Equipment>>::iterator it = equipments_.begin();
-		for(; it!= equipments_.end(); it++)
-		{
-			if((*it).second->getGlobalBounds().intersects(mouseBounds_) || ToolManager::getState() == 1)
-			{
-							
-				if(ToolManager::getState() == 0)
-				{
-
-					std::shared_ptr<Equipment> new_equipment;
-					((*it).second)->clone(new_equipment);
-					ToolManager::setCopyEquipment(new_equipment);
-					new_equipment->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
-					ToolManager::setState(1);
-				}
-				
-				if(ToolManager::getState() == 1)
-				{
-					std::shared_ptr<Equipment> new_equipment = ToolManager::getCopyEquipment();
-					new_equipment->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
-
-				}
-
-
-			}
-		}
-
-		//check if the equipment on the grid is selected
-		std::map<int, std::shared_ptr<Equipment>>::iterator it_grid = equipments_on_grid_move_.begin();
-		for(; it_grid!= equipments_on_grid_move_.end(); it++)
-		{
-			if((*it_grid).second->getGlobalBounds().intersects(mouseBounds_) || ToolManager::getState() == 1)
-			{
-							
-				if(ToolManager::getState() == 0)
-				{
-					ToolManager::setCopyEquipment((*it_grid).second);
-					(*it_grid).second->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
-					ToolManager::setState(1);
-				}
-				
-				if(ToolManager::getState() == 1)
-				{
-					 ToolManager::getCopyEquipment()->setPosition((sf::Vector2f) sf::Mouse::getPosition(window) );
-				}
-
-
-			}
-		}
-
-		*/
 	}
 
 	if( !sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -141,26 +89,11 @@ void ToolManager::update(sf::RenderWindow& window)
 				(ToolManager::copy_equipment)->clone(new_equipment);
 				ToolManager::equipments_on_grid_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
 				ToolManager::equipments_on_grid_move_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
+				changeIdx = row*GRID_WIDTH + col;
 			}
 
 		}
 
-		/*if(ToolManager::state == 2)
-		{
-			unsigned int x = sf::Mouse::getPosition(window).x;
-			unsigned int y = sf::Mouse::getPosition(window).y;
-			if(x>20&&x<620&&y>20&&y<500)
-			{
-				int row = (y-MARGIN)/BLOCK_SIZE;
-				int col = (x-MARGIN)/BLOCK_SIZE;
-				ToolManager::getCopyEquipment()->setPosition(float(2*MARGIN + col*BLOCK_SIZE), float(2*MARGIN + row*BLOCK_SIZE)); 
-			}
-
-			else
-			{
-				//erase the equipment
-			}
-		}*/
 		ToolManager::setState(0);
 					
 	}
@@ -181,6 +114,7 @@ void ToolManager::update(sf::RenderWindow& window)
 				if((*it_on_grid).second->getGlobalBounds().intersects(mouseBounds_))
 				{	
 					(*it_on_grid).second->myRotate();
+					changeIdx = (*it_on_grid).first;
 				}
 			}
 		}

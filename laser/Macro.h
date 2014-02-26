@@ -1,6 +1,7 @@
 #ifndef MACRO_H
 #define MACRO_H
 
+#define LEVEL_NUMBER		5
 #define GRID_HEIGHT			12
 #define GRID_WIDTH			15
 #define BLOCK_SIZE			40

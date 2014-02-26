@@ -13,7 +13,6 @@
 #include "Target.h"
 
 
-
 GameScreen::GameScreen()
 {
 	//put all the equipments needed in this level.
@@ -21,6 +20,8 @@ GameScreen::GameScreen()
 	Mirror::loadTexture();
 	LaserSource::loadTexture();
 	Target::loadTexture();
+	Photon::loadTexture("Red_Light.png");
+	loadGrid();
 	loadEquipment();
 }
 
@@ -28,53 +29,24 @@ void GameScreen::handleInput(sf::RenderWindow& window)
 {
 	//handle the 
 	GameScreen::tool_manager.update(window);
+	GameScreen::handleLaser();
+	
 }
 
 void GameScreen::render(sf::RenderWindow& window)
 {
+	sf::Clock clock;
+	sf::Time time_1;
+	sf::Time time_2;
 	drawGrid(window);
 	drawEquitment(window);
 	if( GameScreen::tool_manager.getState() == 1 || GameScreen::tool_manager.getState() == 2)
 	{
 		window.draw(*(GameScreen::tool_manager.getCopyEquipment()));
 	}
-	/*
-	//drawPhoton(window)
-	//{
-	sf::FloatRect windowRect(MARGIN, MARGIN, GRID_WIDTH*(BLOCK_SIZE), GRID_HEIGHT*(BLOCK_SIZE));
-		std::vector<Photon> myPhotonVec;
-		myPhotonVec.clear();
-		for(int i=0; i!=tool_manager.my_Lasers_.size(); i++)
-		{
-			myPhotonVec.push_back(tool_manager.my_Lasers_[i].getPhoton(2));
-		}
-		while(myPhotonVec.size() > 0)
-		{
-			Photon myPhoton = myPhotonVec.back();
-			myPhoton.setVelocity(1);
-			myPhotonVec.pop_back();
-			window.draw(myPhoton);
-			while(true) {
-				myPhoton.move();
-				std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = tool_manager.equipments_on_grid_.begin();
-				for(; it_on_grid!=tool_manager.equipments_on_grid_.end(); it_on_grid ++)
-				{
-					if(myPhoton.getPosition() == (*it_on_grid).second->getPosition()) {
-						(*it_on_grid).second->reaction(myPhoton);
-						break;
-					}
-				}
 
-				if(myPhoton.getVelocity() == 0.0 || !windowRect.contains(myPhoton.getPosition()))
-				{
-					break;
-				}
-				window.draw(myPhoton);
-			}
-		//}
+	drawLaser(window);
 	
-	}*/
-
 }
 
 void GameScreen::update(sf::Time delta)
@@ -82,14 +54,42 @@ void GameScreen::update(sf::Time delta)
 
 }
 
+void GameScreen::handleLaser()
+{
+	// if the changed equipment is on the previous light path, from that position on, the following photon sprite will be erased
+	// otherwise no photon will be removed
+	if(tool_manager.changeIdx >= 0)
+	{	
+		
+		for(int i = 0; i != lightPaths.size(); i++)
+		{	
+			std::vector<Photon>::iterator lightPaths_it = lightPaths[i].begin();
+			for(; lightPaths_it != lightPaths[i].end(); lightPaths_it++)
+			{
+				if ((*lightPaths_it).getIndex() == tool_manager.changeIdx)
+				{
+					lightPaths[i].erase(lightPaths_it+1, lightPaths[i].end());
+					break;
+				}
+			}
+		}
+		
+		// calculate the light paths from the last photon in each light path
+		calculatePath();
+		tool_manager.changeIdx = -1;
+	}
+}
+
+void GameScreen::loadGrid()
+{
+	std::string* text;
+	text = loadTXT("Level/level_1.txt");
+	GameScreen::myGrid.loadGrid(text,GameScreen::tool_manager.equipments_on_grid_, GameScreen::tool_manager.my_lasers_);
+}
 
 
 void GameScreen::drawGrid(sf::RenderWindow& window)
 {
-	Grid myGrid;
-	std::string* text;
-	text = loadTXT("Level/level_1.txt");
-	myGrid.loadGrid(text,GameScreen::tool_manager.equipments_on_grid_, GameScreen::tool_manager.my_Lasers_);
 	std::vector<std::vector<sf::Sprite>> gridImage = myGrid.getSprites();
 	
 	for (int i = 0; i < GRID_HEIGHT; i++) 
@@ -150,7 +150,6 @@ void GameScreen::drawEquitment(sf::RenderWindow& window)
 			window.draw(*((*it).second));
 		}
 
-
 		std::map<int, std::shared_ptr<Equipment>>::iterator it_on_grid = tool_manager.equipments_on_grid_.begin();
 		for(; it_on_grid!=tool_manager.equipments_on_grid_.end(); it_on_grid ++)
 		{
@@ -172,4 +171,49 @@ std::string* loadEquipmentTXT(const char* fileName)
 		lineNum++;
 	}
 	return text;
+}
+
+void GameScreen::calculatePath()
+{
+	sf::FloatRect windowRect(MARGIN, MARGIN, GRID_WIDTH*(BLOCK_SIZE), GRID_HEIGHT*(BLOCK_SIZE));
+	if(lightPaths.size() == 0)
+	{
+		for(int i = 0; i != tool_manager.my_lasers_.size(); i++)
+		{
+			std::vector<Photon> lightPath;
+			lightPath.push_back(tool_manager.my_lasers_[i].getPhoton());
+			lightPaths.push_back(lightPath);
+		}
+	}
+	for(int i = 0; i != lightPaths.size(); i++)
+	{
+		Photon current = lightPaths[i].back();
+		while(current.getVelocity() != 0.0 && windowRect.contains(current.getPosition()))
+		{
+			Photon nextPhoton = current;
+			int idx = nextPhoton.getIndex();
+			if(tool_manager.equipments_on_grid_.count(idx) > 0)
+			{
+				tool_manager.equipments_on_grid_[idx]->reaction(nextPhoton, lightPaths);
+				lightPaths[i].push_back(nextPhoton);
+			}
+			else
+			{
+				nextPhoton.myMove();
+				lightPaths[i].push_back(nextPhoton);
+			}
+			current = nextPhoton;
+		}
+	}
+}
+
+void GameScreen::drawLaser(sf::RenderWindow& window)
+{
+	for(int i = 0; i != lightPaths.size(); i++)
+	{
+		for(int j = 0; j != lightPaths[i].size(); j++)
+		{
+			window.draw(lightPaths[i][j]);
+		}
+	}
 }

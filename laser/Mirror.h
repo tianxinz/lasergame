@@ -10,7 +10,7 @@ class Mirror : public Equipment
 {
 public:
 	Mirror();
-	void reaction(Photon &photon) override;
+	void reaction(Photon &photon, std::vector<std::vector<Photon>>& lightPaths) override;
 	void clone(std::shared_ptr<Equipment>& ePtr) override;
 	void myRotate() override;
 	static sf::Texture mTexture;

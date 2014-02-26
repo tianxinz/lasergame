@@ -14,9 +14,9 @@ public:
 	LaserSource();
 	void setColor(sf::Color myCol);
 	void myRotate() override; // dummy rotation function
-	void reaction(Photon &photon) override;
+	void reaction(Photon &photon, std::vector<std::vector<Photon>>& lightPaths) override;
 	void clone(std::shared_ptr<Equipment>& ePtr) override; // dummy clone function
-	Photon getPhoton(float rad);
+	Photon getPhoton();
 	static sf::Texture lTexture;
 	static void loadTexture();
 };
