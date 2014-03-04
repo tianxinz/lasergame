@@ -12,7 +12,10 @@
 #include "ToolManager.h"
 #include "Macro.h"
 #include "Grid.h"
+#include "ButtonManager.h"
 
+
+extern int curr_level;
 
 class GameScreen : public Screen
 {
@@ -25,6 +28,7 @@ public:
 	void loadGrid();
 	void loadEquipment();
 	void handleLaser();
+	int allHit;
 
 private:
 	Grid myGrid;
@@ -34,6 +38,11 @@ private:
 	void drawLaser(sf::RenderWindow& window);
 	ToolManager tool_manager;
 	std::vector<std::vector<Photon>> lightPaths;
+	ButtonManager buttonManager_game;
+	UserButton clearButton;
+	UserButton goBackButton;
+	
+
 };
 
 std::string* loadEquipmentTXT(const char* fileName);

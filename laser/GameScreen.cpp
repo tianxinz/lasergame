@@ -4,6 +4,7 @@
 #include<fstream>
 #include<iostream>
 
+
 #include "GameScreen.h"
 #include "Game.h"
 #include "Grid.h"
@@ -11,11 +12,36 @@
 #include "Mirror.h"
 #include "Equipment.h"
 #include "Target.h"
+#include "LevelSelectScreen.h"
 
+
+
+
+int curr_level = 1;
+void my_callBack_goBack()
+{
+	Game::Screen = std::make_shared<LevelSelectScreen>();
+}
+
+
+void my_callBack_clear()
+{
+
+	Game::Screen = std::make_shared<GameScreen>();
+}
 
 GameScreen::GameScreen()
+	:goBackButton("Images/go_back.png"), clearButton("Images/clear_button.png")
 {
 	//put all the equipments needed in this level.
+	goBackButton.callBack = &my_callBack_goBack;
+	clearButton.callBack = &my_callBack_clear;
+
+	goBackButton.setPosition(300, 520);
+	clearButton.setPosition(500, 520);
+	buttonManager_game.addButton("goBack", std::make_shared<UserButton>(goBackButton));
+	buttonManager_game.addButton("clear", std::make_shared<UserButton>(clearButton));
+
 
 	Mirror::loadTexture();
 	LaserSource::loadTexture();
@@ -23,6 +49,7 @@ GameScreen::GameScreen()
 	Photon::loadTexture("Red_Light.png");
 	loadGrid();
 	loadEquipment();
+	allHit = 0;
 }
 
 void GameScreen::handleInput(sf::RenderWindow& window)
@@ -30,14 +57,21 @@ void GameScreen::handleInput(sf::RenderWindow& window)
 	//handle the 
 	GameScreen::tool_manager.update(window);
 	GameScreen::handleLaser();
-	
+	buttonManager_game.update(window);
+	//std::cout<<allHit<<std::endl;
+	if(allHit == 1)
+	{
+		//std::cout<<"he"<<std::endl;
+		Game::Screen = std::make_shared<LevelSelectScreen>();
+	}
 }
 
 void GameScreen::render(sf::RenderWindow& window)
 {
-	sf::Clock clock;
-	sf::Time time_1;
-	sf::Time time_2;
+	//sf::Clock clock;
+	//sf::Time time_1;
+	//sf::Time time_2;
+	buttonManager_game.render(window);
 	drawGrid(window);
 	drawEquitment(window);
 	if( GameScreen::tool_manager.getState() == 1 || GameScreen::tool_manager.getState() == 2)
@@ -46,7 +80,7 @@ void GameScreen::render(sf::RenderWindow& window)
 	}
 
 	drawLaser(window);
-	
+
 }
 
 void GameScreen::update(sf::Time delta)
@@ -82,9 +116,22 @@ void GameScreen::handleLaser()
 
 void GameScreen::loadGrid()
 {
+	//std::cout<<"loadGrid:"<<curr_level<<std::endl;
 	std::string* text;
-	text = loadTXT("Level/level_1.txt");
-	GameScreen::myGrid.loadGrid(text,GameScreen::tool_manager.equipments_on_grid_, GameScreen::tool_manager.my_lasers_);
+	std::string level_name = "Level/level_";
+
+	char intStr[10] = {};
+	itoa(curr_level, intStr,10);
+	std::string str = std::string(intStr);
+
+	level_name += str;
+	level_name += ".txt";
+
+	const char* txt_name = level_name.c_str();
+
+
+	text = loadTXT(txt_name);
+	GameScreen::myGrid.loadGrid(text,GameScreen::tool_manager.equipments_on_grid_, GameScreen::tool_manager.my_lasers_, GameScreen::tool_manager.my_targets_);
 }
 
 
@@ -104,8 +151,20 @@ void GameScreen::drawGrid(sf::RenderWindow& window)
 void GameScreen::loadEquipment()
 {
 	std::string* text_equipment;
+	std::string level_name = "Level/level_equipment_";
+
+	char intStr[10] = {};
+	itoa(curr_level, intStr,10);
+	std::string str = std::string(intStr);
+
+	level_name += str;
+	level_name += ".txt";
+
+	const char* txt_name = level_name.c_str();
+
 	text_equipment = loadEquipmentTXT("Level/level_equipment_1.txt");
 	int i=0;
+
 	while(!text_equipment[i].empty())
 	{
 		switch( text_equipment[i][0] )
@@ -116,7 +175,7 @@ void GameScreen::loadEquipment()
 					if(tool_manager.equipments_.count("mirror")==0)
 					{
 						Mirror mirror;
-						mirror.setPosition(750,100);
+						mirror.setPosition(700,100);
 						tool_manager.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("mirror", std::make_shared<Mirror>(mirror)));
 						tool_manager.equipments_.at("mirror")->setTexture(Mirror::mTexture);
 						i++;
@@ -129,7 +188,7 @@ void GameScreen::loadEquipment()
 					if(tool_manager.equipments_.count("target")==0)
 					{
 						Target target;
-						target.setPosition(750,200);
+						target.setPosition(700,200);
 						tool_manager.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("target", std::make_shared<Target>(target)));
 						tool_manager.equipments_.at("target")->setTexture(Target::tTexture);
 						i++;
@@ -175,6 +234,12 @@ std::string* loadEquipmentTXT(const char* fileName)
 
 void GameScreen::calculatePath()
 {
+	
+	for(int i = 0; i != GameScreen::tool_manager.my_targets_.size(); i++)
+	{
+		GameScreen::tool_manager.my_targets_[i]->lightOff();
+	}
+	
 	sf::FloatRect windowRect(MARGIN, MARGIN, GRID_WIDTH*(BLOCK_SIZE), GRID_HEIGHT*(BLOCK_SIZE));
 	if(lightPaths.size() == 0)
 	{
@@ -205,7 +270,39 @@ void GameScreen::calculatePath()
 			current = nextPhoton;
 		}
 	}
+	
+	for(int i = 0; i != lightPaths.size(); i++)
+	{
+		Photon tail = lightPaths[i].back();
+		int tailIdx = tail.getIndex();
+		if(tool_manager.equipments_on_grid_.count(tailIdx) > 0)
+		{
+			tool_manager.equipments_on_grid_[tailIdx]->reaction(tail, lightPaths);
+		}
+	}
+	
+	bool isAllHit = true;
+	for(int i = 0; i != GameScreen::tool_manager.my_targets_.size(); i++)
+	{
+		bool isHit = false;
+		if(!GameScreen::tool_manager.my_targets_[0]->isHit())
+		{
+			isAllHit = false;
+			break;
+		}
+	}
+	if(isAllHit)
+	{
+		allHit = 1;
+		curr_level ++;
+		if(curr_level == 3)
+			curr_level = 1;
+		//Game::Screen = std::make_shared<GameScreen>();
+
+
+	}
 }
+
 
 void GameScreen::drawLaser(sf::RenderWindow& window)
 {

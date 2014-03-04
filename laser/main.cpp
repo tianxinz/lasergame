@@ -1,5 +1,5 @@
 #include "game.h"
-
+#include<iostream>
 
 
 int main()
@@ -7,8 +7,5 @@ int main()
 
     Game game;
 	game.run();
-
-
-
 
 }

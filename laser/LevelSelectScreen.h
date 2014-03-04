@@ -27,6 +27,7 @@ private:
 	sf::Texture two_star;
 	sf::Texture three_star;
 	sf::Texture lock;
+	UserButton goBackButton;
 
 	void drawLevelStar(sf::RenderWindow& window);
 	void drawLevelLock(sf::RenderWindow& window);

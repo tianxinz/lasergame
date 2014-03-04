@@ -11,7 +11,6 @@ LevelInfo::LevelInfo(const char* fileName)
 	bestScore_ = atoi(info[2].c_str());
 	threshold_1_ = atoi(info[3].c_str());
 	threshold_2_ = atoi(info[4].c_str());
-	std::cout<<label_<<','<<isLocked_<<','<<bestScore_<<','<<threshold_1_<<','<<threshold_2_<<std::endl;
 }
 
 void LevelInfo::lock()

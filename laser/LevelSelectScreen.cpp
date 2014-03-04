@@ -9,15 +9,26 @@
 #include "UserButton.h"
 #include "LevelManager.h"
 #include "LevelInfo.h"
+#include "MenuScreen.h"
 
 void my_callBack_playlevel()
 {
 	Game::Screen = std::make_shared<GameScreen>();
 }
 
+void my_callBack_goBackMenu()
+{
+	Game::Screen = std::make_shared<MenuScreen>();
+}
+
 LevelSelectScreen::LevelSelectScreen()
+	:goBackButton("Images/go_back.png")
 {
 	
+	goBackButton.callBack = &my_callBack_goBackMenu;
+
+	goBackButton.setPosition(700, 500);
+	buttonManager_level.addButton("go_back", std::make_shared<UserButton>(goBackButton));
 	if(!backTexture.loadFromFile("Background/background.png")) 
 	{
 		std::cout << "Error: could not load grid image!" << std::endl;
@@ -64,7 +75,6 @@ LevelSelectScreen::LevelSelectScreen()
 			std::string level_name = "LevelScreen/" + (*it).first;
 			
 			level_name += "_button.png";
-			std::cout<<level_name<<std::endl;
 			UserButton new_button(level_name);
 			sf::Sprite new_star;
 			if((*it).second.getStarNum() == 0)

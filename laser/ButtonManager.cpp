@@ -5,6 +5,8 @@
 #include<map>
 
 #include "ButtonManager.h"
+#include "GameScreen.h"
+
 
 ButtonManager::ButtonManager()
 {
@@ -24,6 +26,11 @@ void ButtonManager::update(sf::RenderWindow& window)
 		{
 			if((*it).second->getBounds().intersects(mouseBounds_))
 			{
+				if((*it).first.compare(0,5,"level") == 0 && (*it).first[5]!='_')
+				{
+					std::string s_level = (*it).first.substr(5);
+					curr_level = atoi(s_level.c_str());
+				}
 				(*it).second->callBack();
 				break;
 			}

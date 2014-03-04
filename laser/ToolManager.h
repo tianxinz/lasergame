@@ -35,6 +35,7 @@ public:
 	std::map<int, std::shared_ptr<Equipment>> equipments_on_grid_move_;
 	std::vector<LaserSource> my_lasers_;
 	std::vector<Photon> my_Photons;
+	std::vector<std::shared_ptr<Equipment>> my_targets_;
 	int changeIdx;
 
 
