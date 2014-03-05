@@ -21,6 +21,7 @@ private:
 	UserButton playButton;
 	UserButton quitButton;
 	UserButton levelSelectButton;
+	UserButton levelEditButton;
 	sf::Texture backTexture;
 
 };

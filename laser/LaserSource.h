@@ -13,6 +13,7 @@ class LaserSource : public Equipment
 public:
 	LaserSource();
 	void setColor(sf::Color myCol);
+	bool isLaserSource() override; // always return true;
 	bool isHit() override; //dummy isHit function always return true;
 	void lightOff() override; // dummy lightOff function
 	void myRotate() override; // dummy rotation function

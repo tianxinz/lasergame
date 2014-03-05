@@ -4,7 +4,6 @@
 #include<fstream>
 #include<iostream>
 
-
 #include "GameScreen.h"
 #include "Game.h"
 #include "Grid.h"
@@ -13,11 +12,11 @@
 #include "Equipment.h"
 #include "Target.h"
 #include "LevelSelectScreen.h"
-
-
+#include "LevelManager.h"
 
 
 int curr_level = 1;
+int currentScore  = 0;
 void my_callBack_goBack()
 {
 	Game::Screen = std::make_shared<LevelSelectScreen>();
@@ -30,17 +29,33 @@ void my_callBack_clear()
 	Game::Screen = std::make_shared<GameScreen>();
 }
 
+void my_callBack_replay()
+{
+	curr_level--;
+	Game::Screen = std::make_shared<GameScreen>();
+}
+
 GameScreen::GameScreen()
-	:goBackButton("Images/go_back.png"), clearButton("Images/clear_button.png")
+	:goBackButton("Images/go_back.png"), clearButton("Images/clear_button.png"),nextLevelButton("Images/next_level_button.png"),replayButton("Images/replay_button.png")
 {
 	//put all the equipments needed in this level.
 	goBackButton.callBack = &my_callBack_goBack;
 	clearButton.callBack = &my_callBack_clear;
+	nextLevelButton.callBack = &my_callBack_clear;
+	replayButton.callBack = &my_callBack_replay;
 
 	goBackButton.setPosition(300, 520);
 	clearButton.setPosition(500, 520);
 	buttonManager_game.addButton("goBack", std::make_shared<UserButton>(goBackButton));
 	buttonManager_game.addButton("clear", std::make_shared<UserButton>(clearButton));
+
+	nextLevelButton.setPosition(300,400);
+	replayButton.setPosition(500,400);
+	if(curr_level < LEVEL_NUMBER)
+	{
+		buttonManager_end.addButton("next_level",std::make_shared<UserButton> (nextLevelButton));
+	}
+	buttonManager_end.addButton("replay",std::make_shared<UserButton> (replayButton));
 
 
 	Mirror::loadTexture();
@@ -50,27 +65,40 @@ GameScreen::GameScreen()
 	loadGrid();
 	loadEquipment();
 	allHit = 0;
+	renderCount = 0;
+	LevelManager * level_manager = LevelManager::getInstance();
+	char numStr[10] = {};
+	itoa(curr_level, numStr, 10);
+	std::string num = std::string(numStr);
+	std::string levelKey = "level";
+	levelKey += num;
+	currentScore = level_manager->levelMap[levelKey].getInitialScore();
 }
 
 void GameScreen::handleInput(sf::RenderWindow& window)
 {
-	//handle the 
 	GameScreen::tool_manager.update(window);
 	GameScreen::handleLaser();
 	buttonManager_game.update(window);
-	//std::cout<<allHit<<std::endl;
 	if(allHit == 1)
 	{
-		//std::cout<<"he"<<std::endl;
-		Game::Screen = std::make_shared<LevelSelectScreen>();
+		//std::cout<<"come into reset gamescreen"<<std::endl;
+		renderCount++;
+		//std::cout<<"come into reset gamescreen: "<<renderCount<<std::endl;
+		if(renderCount == 1)
+		{
+			LevelManager *level_manager = LevelManager::getInstance();
+			level_manager->saveLevelInfo(curr_level-1, currentScore);
+		}
+		if(renderCount > 150)
+		{
+			buttonManager_end.update(window);
+		}
 	}
 }
 
 void GameScreen::render(sf::RenderWindow& window)
 {
-	//sf::Clock clock;
-	//sf::Time time_1;
-	//sf::Time time_2;
 	buttonManager_game.render(window);
 	drawGrid(window);
 	drawEquitment(window);
@@ -80,7 +108,12 @@ void GameScreen::render(sf::RenderWindow& window)
 	}
 
 	drawLaser(window);
-
+	if(allHit == 1)
+	{
+		if(renderCount > 150)
+			drawEnd(window);
+	}
+	
 }
 
 void GameScreen::update(sf::Time delta)
@@ -116,7 +149,6 @@ void GameScreen::handleLaser()
 
 void GameScreen::loadGrid()
 {
-	//std::cout<<"loadGrid:"<<curr_level<<std::endl;
 	std::string* text;
 	std::string level_name = "Level/level_";
 
@@ -129,7 +161,7 @@ void GameScreen::loadGrid()
 
 	const char* txt_name = level_name.c_str();
 
-
+	//std::cout<<txt_name<<std::endl;
 	text = loadTXT(txt_name);
 	GameScreen::myGrid.loadGrid(text,GameScreen::tool_manager.equipments_on_grid_, GameScreen::tool_manager.my_lasers_, GameScreen::tool_manager.my_targets_);
 }
@@ -284,7 +316,7 @@ void GameScreen::calculatePath()
 	bool isAllHit = true;
 	for(int i = 0; i != GameScreen::tool_manager.my_targets_.size(); i++)
 	{
-		bool isHit = false;
+		//std::cout<<"target:ishit "<<GameScreen::tool_manager.my_targets_[0]->isHit()<<std::endl;
 		if(!GameScreen::tool_manager.my_targets_[0]->isHit())
 		{
 			isAllHit = false;
@@ -293,16 +325,11 @@ void GameScreen::calculatePath()
 	}
 	if(isAllHit)
 	{
+		//std::cout<<"come into isAllHit"<<std::endl;
 		allHit = 1;
 		curr_level ++;
-		if(curr_level == 3)
-			curr_level = 1;
-		//Game::Screen = std::make_shared<GameScreen>();
-
-
 	}
 }
-
 
 void GameScreen::drawLaser(sf::RenderWindow& window)
 {
@@ -313,4 +340,26 @@ void GameScreen::drawLaser(sf::RenderWindow& window)
 			window.draw(lightPaths[i][j]);
 		}
 	}
+}
+
+void GameScreen::drawEnd(sf::RenderWindow& window)	
+{
+	//:nextLevelButton("Images/next_level_button.png"), replayButton("Images/replay_button.png")
+    //sf::Texture zero_star;
+	//sf::Texture one_star;
+	//sf::Texture two_star;
+	//sf::Texture three_star;
+	transparent_background.loadFromFile("Background/transparent_background.png");
+	sf::Sprite trans_back;
+	trans_back.setTexture(transparent_background);
+	sf::Color color(255,255,255,210);
+	trans_back.setColor(color);
+	window.draw(trans_back);
+	congratulation.loadFromFile("Background/congratulation.png");
+	sf::Sprite cong;
+	cong.setTexture(congratulation);
+	cong.setPosition(200,50);
+	window.draw(cong);
+	buttonManager_end.render(window);
+
 }

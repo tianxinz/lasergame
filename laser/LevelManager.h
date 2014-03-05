@@ -24,13 +24,13 @@ private:
 			levelKey += num;
 			levelName += num;
 			levelName += "_info.txt";
-			//std::cout<<levelName<<std::endl;
 			const char * fileName = levelName.c_str();
 			LevelInfo level_info(fileName);
 			levelMap.insert(std::pair<std::string, LevelInfo>(levelKey, level_info));
 		}
 	}
 public:
+	void saveLevelInfo(int levelLabel, int currScore);
 	std::map<std::string, LevelInfo> levelMap;
     static LevelManager* getInstance();
     ~LevelManager()
@@ -38,20 +38,9 @@ public:
         instanceFlag = false;
     }
 };
-bool LevelManager::instanceFlag = false;
-LevelManager* LevelManager::level_manager = NULL;
-LevelManager* LevelManager::getInstance()
-{
-    if(! instanceFlag)
-    {
-        level_manager = new LevelManager();
-        instanceFlag = true;
-        return level_manager;
-    }
-    else
-    {
-        return level_manager;
-    }
-}
+
+
+
+
 
 #endif

@@ -66,4 +66,11 @@ bool Splitter::isHit()
 {
 	return true;
 }
+
+bool Splitter::isLaserSource()
+{
+	return false;
+}
+
 void Splitter::lightOff(){}
+

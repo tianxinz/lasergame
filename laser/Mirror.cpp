@@ -9,6 +9,7 @@ Mirror::Mirror()
 {
 	setOrigin(BLOCK_SIZE/2, BLOCK_SIZE/2);
 	setTexture(Mirror::mTexture);
+	cost = 10;
 }
 
 void Mirror::reaction(Photon& photon, std::vector<std::vector<Photon>>& lightPaths)
@@ -62,6 +63,11 @@ void Mirror::loadTexture()
 bool Mirror::isHit()
 {
 	return true;
+}
+
+bool Mirror::isLaserSource()
+{
+	return false;
 }
 
 void Mirror::lightOff(){}

@@ -62,12 +62,18 @@ void LaserSource::clone(std::shared_ptr<Equipment>& ePtr)
 
 void LaserSource::myRotate_E()
 {
-	setRotation(this->getRotation()+45);
+	setRotation(this->getRotation()+90);
 }
 
 bool LaserSource::isHit()
 {
 	return true;
 }
+
+bool LaserSource::isLaserSource()
+{
+	return true;
+}
+
 void LaserSource::myRotate(){}
 void LaserSource::lightOff(){}

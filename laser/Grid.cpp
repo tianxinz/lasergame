@@ -118,6 +118,23 @@ void Grid::loadGrid(std::string* layout, std::map<int, std::shared_ptr<Equipment
 	}
 }
 
+void Grid::loadGridEdit()
+{
+	for (int row = 0; row < GRID_HEIGHT; row++) 
+	{
+		std::vector<sf::Sprite> rowVec = std::vector<sf::Sprite>();
+		for (int col = 0; col < GRID_WIDTH; col++)
+		{
+			sf::Sprite block = sf::Sprite();
+			block.setTexture(gridTexture);
+			block.setPosition((float)(MARGIN+col*(BLOCK_SIZE)), (float)(MARGIN+row*(BLOCK_SIZE)));
+			rowVec.push_back(block);	
+		}
+		gridVec.push_back(rowVec);
+	}
+}
+
+
 std::vector<std::vector<sf::Sprite>> Grid::getSprites() 
 {
 	return gridVec;

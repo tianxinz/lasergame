@@ -5,6 +5,7 @@
 #include <map>
 
 #include "ToolManager.h"
+#include "GameScreen.h"
 
 ToolManager::ToolManager()
 {
@@ -59,6 +60,7 @@ void ToolManager::update(sf::RenderWindow& window)
 			if(flag_find == 1)
 			{
 				int key = (*it_grid).first;
+				currentScore += (*it_grid).second->cost;
 				equipments_on_grid_move_.erase(key);
 				equipments_on_grid_.erase(key);
 				changeIdx  = key;
@@ -89,6 +91,7 @@ void ToolManager::update(sf::RenderWindow& window)
 				(ToolManager::copy_equipment)->clone(new_equipment);
 				ToolManager::equipments_on_grid_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
 				ToolManager::equipments_on_grid_move_.insert(std::pair<int, std::shared_ptr<Equipment>>((row*GRID_WIDTH + col), new_equipment));
+				currentScore -= new_equipment->cost;
 				changeIdx = row*GRID_WIDTH + col;
 			}
 

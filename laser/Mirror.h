@@ -10,6 +10,7 @@ class Mirror : public Equipment
 {
 public:
 	Mirror();
+	bool isLaserSource() override;
 	void reaction(Photon &photon, std::vector<std::vector<Photon>>& lightPaths) override;
 	void clone(std::shared_ptr<Equipment>& ePtr) override;
 	bool isHit() override; //dummy isHit function always return true;

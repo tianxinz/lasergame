@@ -12,6 +12,7 @@ class Target : public Equipment
 	bool hit;
 public:
 	Target();
+	bool isLaserSource() override;
 	bool isHit() override; // real isHit function
 	void clone(std::shared_ptr<Equipment>& ePtr) override; // dummy clone function
 	void myRotate() override; // dummy rotation function
