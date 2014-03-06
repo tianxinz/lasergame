@@ -12,6 +12,7 @@ ButtonManager::ButtonManager()
 {
 	mouseBounds_.width = 1.f;
 	mouseBounds_.height = 1.f;
+	isSaveButton = 0;
 }
 
 void ButtonManager::update(sf::RenderWindow& window)
@@ -26,6 +27,12 @@ void ButtonManager::update(sf::RenderWindow& window)
 		{
 			if((*it).second->getBounds().intersects(mouseBounds_))
 			{
+				if((*it).first.compare(0,4,"save") == 0)
+				{
+					isSaveButton = 1;
+					break;
+				}
+				
 				if((*it).first.compare(0,5,"level") == 0 && (*it).first[5]!='_')
 				{
 					std::string s_level = (*it).first.substr(5);

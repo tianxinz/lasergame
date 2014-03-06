@@ -73,4 +73,3 @@ bool Splitter::isLaserSource()
 }
 
 void Splitter::lightOff(){}
-

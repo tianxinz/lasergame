@@ -67,7 +67,7 @@ void Target::myRotate(){}
 
 void Target::myRotate_E()
 {
-	setRotation(this->getRotation()+45);
+	setRotation(this->getRotation()+90);
 }
 
 bool Target::isLaserSource()

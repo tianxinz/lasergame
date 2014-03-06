@@ -23,10 +23,11 @@ public :
 	void handleInput(sf::RenderWindow& window) override;
 	void update(sf::Time delta) override;
 	void render(sf::RenderWindow& window) override;
-	void loadGridEdit();
+	void loadGridEdit_();
 	void loadEquipmentEdit();
 	//void loadUseEquipmentEdit();
 	void handleLaserEdit();
+	void save(sf::RenderWindow& window);
 
 private:
 	Grid myGrid_edit;

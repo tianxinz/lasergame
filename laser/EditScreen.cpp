@@ -14,6 +14,91 @@
 #include "LevelSelectScreen.h"
 #include "MenuScreen.h"
 //#include "LevelManagerEdit.h"
+#include <iostream>
+#include <cstdlib>
+#include <windows.h>
+#include <shobjidl.h> 
+#include <cmath>
+
+HINSTANCE hInstance;
+HANDLE save_button;
+HWND file_name;
+HWND initial_score;
+HWND two_star;
+HWND three_star;
+
+char buffer1[20];
+char buffer2[20];
+char buffer3[20];
+char buffer4[20];
+
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (uMsg)
+    {
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+
+	case WM_CREATE:
+		file_name = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), NULL,WS_CHILD | WS_VISIBLE, 110, 20, 140,20, hwnd, NULL, NULL, NULL);
+	
+		CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Static"), TEXT("File Name"),WS_CHILD | WS_VISIBLE, 10, 20, 100,20, hwnd, NULL, NULL, NULL);
+
+		initial_score = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), NULL, WS_CHILD | WS_VISIBLE, 110, 70, 140,20, hwnd, NULL, NULL, NULL);
+
+		CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Static"), TEXT("Initial Money"), WS_CHILD | WS_VISIBLE, 10, 70, 100,20, hwnd, NULL, NULL, NULL);
+
+		two_star = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), NULL,WS_CHILD | WS_VISIBLE, 110, 120, 140,20, hwnd, NULL, NULL, NULL);
+
+		CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Static"), TEXT("Two Stars Scores"),WS_CHILD | WS_VISIBLE, 10, 120, 100,20, hwnd, NULL, NULL, NULL);
+
+		three_star = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Edit"), NULL,WS_CHILD | WS_VISIBLE, 110, 170, 140,20, hwnd, NULL, NULL, NULL);
+
+		CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Static"), TEXT("Three Stars Scores"),WS_CHILD | WS_VISIBLE, 10, 170, 100,20, hwnd, NULL, NULL, NULL);
+
+		save_button = CreateWindowEx(WS_EX_CLIENTEDGE, TEXT("Button"), TEXT("OK"),WS_CHILD | WS_VISIBLE, 100, 220, 50,20, hwnd, NULL, NULL, NULL);
+		
+		break;
+	
+
+
+	case WM_COMMAND:
+		switch(wParam)
+		{
+		case BN_CLICKED:
+			if(save_button = (HWND)lParam)
+			{
+				SendMessage(file_name, WM_GETTEXT, 20, reinterpret_cast<LPARAM>(buffer1));
+				SendMessage(initial_score, WM_GETTEXT, 20, reinterpret_cast<LPARAM>(buffer2));
+				SendMessage(two_star, WM_GETTEXT, 20, reinterpret_cast<LPARAM>(buffer3));
+				SendMessage(three_star, WM_GETTEXT, 20, reinterpret_cast<LPARAM>(buffer4));
+			
+				
+				DestroyWindow(hwnd);
+				break;
+			}
+		}
+		break;
+
+
+    case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+
+            FillRect(hdc, &ps.rcPaint, (HBRUSH) (COLOR_WINDOW+1));
+
+            EndPaint(hwnd, &ps);
+        }
+        return 0;
+
+    }
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
 
 void my_callBack_clear_edit()
 {
@@ -49,10 +134,9 @@ EditScreen::EditScreen()
 	LaserSource::loadTexture();
 	Target::loadTexture();
 	Photon::loadTexture("Red_Light.png");
-	loadGridEdit();
+	loadGridEdit_();
 	loadEquipmentEdit();
-//	loadUseEquipmentEdit();
-	//LevelManagerEdit *level_manager = LevelManagerEdit::getInstance();
+
 }
 
 void EditScreen::handleInput(sf::RenderWindow& window)
@@ -60,6 +144,8 @@ void EditScreen::handleInput(sf::RenderWindow& window)
 	EditScreen::tool_manager_edit.update(window);
 	EditScreen::handleLaserEdit();
 	buttonManager_edit.update(window);
+
+
 }
 
 void EditScreen::render(sf::RenderWindow& window)
@@ -73,6 +159,10 @@ void EditScreen::render(sf::RenderWindow& window)
 	}
 	//std::cout<<"laser num "<<tool_manager_edit.my_lasers_.size()<<std::endl;
 	drawLaserEdit(window);
+	if(buttonManager_edit.isSaveButton == 1)
+	{
+	    save(window);
+	}
 }
 
 void EditScreen::update(sf::Time delta)
@@ -105,7 +195,7 @@ void EditScreen::handleLaserEdit()
 
 }
 
-void EditScreen::loadGridEdit()
+void EditScreen::loadGridEdit_()
 {
 	EditScreen::myGrid_edit.loadGridEdit();
 }
@@ -233,6 +323,10 @@ void EditScreen::drawEquitmentEdit(sf::RenderWindow& window)
 		window.draw(*((*it_on_grid).second));
 	}
 
+	for(int i=0; i<tool_manager_edit.equipments_use_.size(); i++)
+	{
+		window.draw(tool_manager_edit.equipments_use_[i]);
+	}
 
 }
 
@@ -308,3 +402,66 @@ void EditScreen::drawLaserEdit(sf::RenderWindow& window)
 	}
 }
 
+
+
+
+void EditScreen::save(sf::RenderWindow& window)
+{
+
+	hInstance = NULL;
+
+	 const wchar_t CLASS_NAME[]  = L"save information";
+    
+    WNDCLASS wc = { };
+
+    wc.lpfnWndProc   = WindowProc;
+    wc.hInstance     = hInstance;
+    wc.lpszClassName = CLASS_NAME;
+
+    RegisterClass(&wc);
+
+	
+
+    // Create the window.
+
+    HWND hwnd = CreateWindowEx(
+        0,                    // Optional window styles.
+        CLASS_NAME,                         // Window class
+        L"Learn to Program for Windows",    // Window text
+        WS_OVERLAPPEDWINDOW,                // Window style
+
+        // Size and position
+        (int)100, (int)200, (int)300, (int)400,
+
+		NULL,       // Parent window    
+        NULL,       // Menu
+        hInstance,  // Instance handle
+        NULL        // Additional application data
+        );
+	
+    if(hwnd == NULL)
+    {
+        return;
+    }
+
+
+	EnableWindow(window.getSystemHandle(),false);
+	SetActiveWindow(hwnd);
+
+    ShowWindow(hwnd, 1);
+
+	
+    // Run the message loop.
+
+    MSG msg = { };
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+
+	SetActiveWindow(window.getSystemHandle());
+	EnableWindow(window.getSystemHandle(),true);
+	buttonManager_edit.isSaveButton = 0;
+}

@@ -157,10 +157,13 @@ void ToolManagerEdit::update(sf::RenderWindow& window)
 			{
 				if(equipments_use_[i].getGlobalBounds().intersects(mouseBounds_))
 				{
+
 					unsigned int x = sf::Mouse::getPosition(window).x;
 					int idx = (x-1)/60;
 					int prevState = equipAvalibility[idx];
-					equipAvalibility.insert(std::pair<int, int>(idx, 1-prevState));
+					std::map<int, int>::iterator it = equipAvalibility.find(idx);
+					if(it != equipAvalibility.end())
+						it->second = 1 - prevState;
 					equipments_use_[i].setTexture(equipments_texture[2*i+1-prevState]);	
 					break;
 				}
