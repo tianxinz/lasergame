@@ -28,6 +28,7 @@ public :
 	//void loadUseEquipmentEdit();
 	void handleLaserEdit();
 	void save(sf::RenderWindow& window);
+	void saveToFile(char levelName_arr[], char initMoney_arr[], char twoStarScore_arr[], char threeStarScore_arr[]);
 
 private:
 	Grid myGrid_edit;
@@ -42,6 +43,8 @@ private:
 	UserButton saveButton_edit;
 	UserButton goBackButton_edit;
 	sf::Texture background_edit;
+	sf::Texture background;
+	sf::Sprite backgroundSp;
 };
 
 std::string* loadEquipmentTXT_edit(const char*fileName);

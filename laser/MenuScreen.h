@@ -7,6 +7,8 @@
 #include "UserButton.h"
 #include "ButtonManager.h"
 
+extern int load_mode;
+
 class MenuScreen : public Screen
 {
 public:

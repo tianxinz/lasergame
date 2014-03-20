@@ -10,14 +10,18 @@
 #include "LevelSelectScreen.h"
 #include "EditScreen.h"
 
+int load_mode = 0;
+
 void my_callBack_play()
 {
+	load_mode = 0;
 	Game::Screen = std::make_shared<GameScreen>();
 }
 
 void my_callBack_quit()
 {
-	//Game::Screen = std::make_shared<EndScreen>();
+	load_mode = 1;
+	Game::Screen = std::make_shared<LevelSelectScreen>();
 }
 
 void my_callBack_edit()
@@ -27,6 +31,7 @@ void my_callBack_edit()
 
 void my_callBack_levelSelect()
 {
+	load_mode = 0;
 	Game::Screen = std::make_shared<LevelSelectScreen>();
 }
 
@@ -34,7 +39,7 @@ MenuScreen::MenuScreen()
 	:playButton("Images/play.png"), quitButton("Images/quit.png"), levelSelectButton("Images/level_select.png"),levelEditButton("Images/level_edit.png")
 {
 	playButton.callBack = &my_callBack_play;
-	//quitButton.callBack = &my_callBack_quit;
+	quitButton.callBack = &my_callBack_quit;
 	levelSelectButton.callBack = &my_callBack_levelSelect;
 	levelEditButton.callBack = &my_callBack_edit;
 	playButton.setPosition(200,300);

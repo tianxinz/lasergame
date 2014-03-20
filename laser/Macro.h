@@ -1,8 +1,8 @@
 #ifndef MACRO_H
 #define MACRO_H
 
-#define EQUIP_NUM           1
-#define LEVEL_NUMBER		2
+#define EQUIP_NUM           2
+#define LEVEL_NUMBER		5
 #define GRID_HEIGHT			12
 #define GRID_WIDTH			15
 #define BLOCK_SIZE			40

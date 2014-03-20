@@ -13,6 +13,7 @@ Target::Target()
 	col = sf::Color::Red;
 	hit = false;
 	setTexture(Target::tTexture);
+	label = '5';
 }
 
 void Target::reaction(Photon& photon, std::vector<std::vector<Photon>>& lightPaths)

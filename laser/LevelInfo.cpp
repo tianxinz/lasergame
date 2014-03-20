@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>	
 #include <fstream>
+#include "LevelManager.h"
+#include "GameScreen.h"
 
 LevelInfo::LevelInfo(const char* fileName)
 {
@@ -59,11 +61,19 @@ int LevelInfo::getInitialScore()
 
 void LevelInfo::saveToFile()
 {
-	std::string levelName = "Level/level_";
-	char numStr[10] = {};
-	itoa(label_, numStr, 10);
-	std::string num = std::string(numStr);
-	levelName += num;
+	std::string levelName = "";
+	if(load_mode == 0)
+	{
+		levelName = "Level/level_";
+		char numStr[10] = {};
+		itoa(label_, numStr, 10);
+		std::string num = std::string(numStr);
+		levelName += num;
+	}
+	else
+	{
+		levelName = "UserLevel/" + user_curr_level;
+	}
 	levelName += "_info.txt";
 	const char * fileName = levelName.c_str();
 	std::ofstream saveFile;

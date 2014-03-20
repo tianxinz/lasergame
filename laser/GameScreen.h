@@ -17,6 +17,7 @@
 
 extern int curr_level;
 extern int currentScore;
+extern  std::string user_curr_level;
 
 class GameScreen : public Screen
 {
@@ -54,6 +55,8 @@ private:
 	sf::Texture three_star;
 	sf::Texture transparent_background;
 	sf::Texture congratulation;
+	sf::Texture background;
+	sf::Sprite backgroundSp;
 
 
 };

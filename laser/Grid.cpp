@@ -143,7 +143,7 @@ std::vector<std::vector<sf::Sprite>> Grid::getSprites()
 std::string* loadTXT(const char* fileName)
 {
 	std::string* text;
-	text = new std::string[GRID_HEIGHT+1];
+	text = new std::string[100];
 	std::ifstream myfile(fileName);
 	int lineNum = 0;
 	while(std::getline(myfile, text[lineNum]))

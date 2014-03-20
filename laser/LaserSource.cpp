@@ -11,6 +11,7 @@ LaserSource::LaserSource()
 	col = sf::Color::Red;
 	setOrigin(BLOCK_SIZE/2, BLOCK_SIZE/2);
 	setTexture(LaserSource::lTexture);
+	label = '1';
 }
 void LaserSource::reaction(Photon& photon, std::vector<std::vector<Photon>>& lightPaths)
 {

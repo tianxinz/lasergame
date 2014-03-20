@@ -38,6 +38,7 @@ public:
 	std::vector<Photon> my_Photons;
 	std::vector<std::shared_ptr<Equipment>> my_targets_;
 	std::map<int, int> equipAvalibility;
+	std::vector<char> equipmentLabel;
 	int changeIdx;
 
 

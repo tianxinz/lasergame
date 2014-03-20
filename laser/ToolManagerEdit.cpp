@@ -20,7 +20,28 @@ ToolManagerEdit::ToolManagerEdit()
 	equipments_texture[0].loadFromFile("Equipments_Image/Mirror_Dark.png");
 	sf::Texture mirrorLight;
 	equipments_texture.push_back(mirrorLight);
-	equipments_texture[1].loadFromFile("Equipments_Image/Mirror.png");
+	equipments_texture[1].loadFromFile("Equipments_Image/Mirror_Light.png");
+
+	sf::Texture splitterDark;
+	equipments_texture.push_back(splitterDark);
+	equipments_texture[2].loadFromFile("Equipments_Image/Splitter_Dark.png");
+	sf::Texture splitterLight;
+	equipments_texture.push_back(splitterLight);
+	equipments_texture[3].loadFromFile("Equipments_Image/Splitter_Light.png");
+
+	sf::Texture filter_R_Dark;
+	equipments_texture.push_back(filter_R_Dark);
+	equipments_texture[4].loadFromFile("Equipments_Image/ColorChanger_red_Dark.png");
+	sf::Texture filter_R_Light;
+	equipments_texture.push_back(filter_R_Light);
+	equipments_texture[5].loadFromFile("Equipments_Image/ColorChanger_red_Light.png");
+
+	sf::Texture filter_B_Dark;
+	equipments_texture.push_back(filter_B_Dark);
+	equipments_texture[4].loadFromFile("Equipments_Image/ColorChanger_blue_Dark.png");
+	sf::Texture filter_B_Light;
+	equipments_texture.push_back(filter_B_Light);
+	equipments_texture[5].loadFromFile("Equipments_Image/ColorChanger_blue_Light.png");
 
 	// put all equipment into vector and map
 	for(int i = 0; i != EQUIP_NUM; i++)
@@ -31,6 +52,10 @@ ToolManagerEdit::ToolManagerEdit()
 		equipments_use_[i].setPosition((float)(MARGIN*(i+1)+BLOCK_SIZE*i), 530.0);
 		equipAvalibility.insert(std::pair<int, int>(i,0));	
 	}
+	equipmentLabel.push_back('a');
+	equipmentLabel.push_back('b');
+	equipmentLabel.push_back('f');
+	equipmentLabel.push_back('g');
 
 }
 

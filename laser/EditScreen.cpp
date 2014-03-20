@@ -3,6 +3,7 @@
 #include <memory>
 #include<fstream>
 #include<iostream>
+#include <algorithm> 
 
 #include "EditScreen.h"
 #include "Game.h"
@@ -13,7 +14,8 @@
 #include "Target.h"
 #include "LevelSelectScreen.h"
 #include "MenuScreen.h"
-//#include "LevelManagerEdit.h"
+#include "Splitter.h"
+#include "Wall.h"
 #include <iostream>
 #include <cstdlib>
 #include <windows.h>
@@ -76,8 +78,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				SendMessage(initial_score, WM_GETTEXT, 20, reinterpret_cast<LPARAM>(buffer2));
 				SendMessage(two_star, WM_GETTEXT, 20, reinterpret_cast<LPARAM>(buffer3));
 				SendMessage(three_star, WM_GETTEXT, 20, reinterpret_cast<LPARAM>(buffer4));
-			
-				
 				DestroyWindow(hwnd);
 				break;
 			}
@@ -99,6 +99,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
+
 
 void my_callBack_clear_edit()
 {
@@ -130,13 +131,19 @@ EditScreen::EditScreen()
 	buttonManager_edit.addButton("save", std::make_shared<UserButton>(saveButton_edit));
 	buttonManager_edit.addButton("edit", std::make_shared<UserButton>(goBackButton_edit));
 
+	Wall::loadTexture();
 	Mirror::loadTexture();
+	Splitter::loadTexture();
 	LaserSource::loadTexture();
 	Target::loadTexture();
 	Photon::loadTexture("Red_Light.png");
 	loadGridEdit_();
 	loadEquipmentEdit();
-
+	if(!background.loadFromFile("Background/GameScreen.jpg"))
+	{
+		std::cout<< "load game screen background fail!"	<<std::endl;
+	}
+	backgroundSp.setTexture(background);
 }
 
 void EditScreen::handleInput(sf::RenderWindow& window)
@@ -150,6 +157,7 @@ void EditScreen::handleInput(sf::RenderWindow& window)
 
 void EditScreen::render(sf::RenderWindow& window)
 {
+	window.draw(backgroundSp);
 	buttonManager_edit.render(window);
 	drawGridEdit(window);
 	drawEquitmentEdit(window);
@@ -257,19 +265,36 @@ void EditScreen::loadEquipmentEdit()
 				if(tool_manager_edit.equipments_.count("mirror")==0)
 				{
 					Mirror mirror;
-					mirror.setPosition(700,250);
+					mirror.setPosition(700,200);
 					tool_manager_edit.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("mirror", std::make_shared<Mirror>(mirror)));
 					tool_manager_edit.equipments_.at("mirror")->setTexture(Mirror::mTexture);
 					i++;
 				}
 				break;
 			}
-		case SPLITTER:
+		case SPLITTER :
 			{
+
+				if(tool_manager_edit.equipments_.count("splitter")==0)
+				{
+					Splitter splitter;
+					splitter.setPosition(700,250);
+					tool_manager_edit.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("splitter", std::make_shared<Splitter>(splitter)));
+					tool_manager_edit.equipments_.at("splitter")->setTexture(Splitter::sTexture);
+					i++;
+				}
 				break;
 			}
 		case WALL:
 			{
+				if(tool_manager_edit.equipments_.count("wall")==0)
+				{
+					Wall wall;
+					wall.setPosition(700,300);
+					tool_manager_edit.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("wall", std::make_shared<Wall>(wall)));
+					tool_manager_edit.equipments_.at("wall")->setTexture(Wall::wTexture);
+					i++;
+				}
 				break;
 			}
 		case SWITCH:
@@ -407,7 +432,7 @@ void EditScreen::drawLaserEdit(sf::RenderWindow& window)
 
 void EditScreen::save(sf::RenderWindow& window)
 {
-
+	
 	hInstance = NULL;
 
 	 const wchar_t CLASS_NAME[]  = L"save information";
@@ -451,7 +476,7 @@ void EditScreen::save(sf::RenderWindow& window)
     ShowWindow(hwnd, 1);
 
 	
-    // Run the message loop.
+    // Run the message loop.a3e
 
     MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0))
@@ -459,9 +484,115 @@ void EditScreen::save(sf::RenderWindow& window)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-
-
 	SetActiveWindow(window.getSystemHandle());
 	EnableWindow(window.getSystemHandle(),true);
 	buttonManager_edit.isSaveButton = 0;
+	//std::cout<<buffer1[1]<<std::endl;
+	//std::cout<<buffer1[2]<<std::endl;
+	//std::cout<<buffer1[3]<<std::endl;
+	saveToFile(buffer1, buffer2, buffer3, buffer4);
+
+}
+
+void EditScreen::saveToFile(char * levelName_arr, char * initMoney_arr, char * twoStarScore_arr, char * threeStarScore_arr)
+{
+	// create filename for the user designed level
+	std::string levelName(levelName_arr, 20);
+	std::string initMoney(initMoney_arr, 20);
+	std::string twoStarScore(twoStarScore_arr, 20);
+	std::string threeStarScore(threeStarScore_arr, 20);
+	levelName.erase(std::remove(levelName.begin(), levelName.end(), (char)0), levelName.end());
+	initMoney.erase(std::remove(initMoney.begin(), initMoney.end(), (char)0), initMoney.end());
+	twoStarScore.erase(std::remove(twoStarScore.begin(), twoStarScore.end(), (char)0), twoStarScore.end());
+	threeStarScore.erase(std::remove(threeStarScore.begin(), threeStarScore.end(), (char)0), threeStarScore.end());
+
+	std::string path = "UserLevel/";
+	std::string layout = path + levelName + ".txt";
+	std::string info = path + levelName + "_info.txt";
+	std::string equip = path + levelName + "_equipment.txt";
+
+	const char * layoutFileName = layout.c_str();
+	const char * infoFileName = info.c_str();
+	const char * equipFileName = equip.c_str();
+
+	// save layout into txt
+	std::ofstream layoutFile;
+	layoutFile.open(layoutFileName);
+	for(int i = 0; i != 12; i++)
+	{
+		for(int j = 0; j != 15; j++)
+		{
+			int idx = i*GRID_WIDTH+j;
+			char sign = '0';
+			if(tool_manager_edit.equipments_on_grid_.count(idx) > 0)
+			{
+				if(tool_manager_edit.equipments_on_grid_[idx]->label != MIRROR &&
+					tool_manager_edit.equipments_on_grid_[idx]->label != SPLITTER &&
+					tool_manager_edit.equipments_on_grid_[idx]->label != FILTER_R &&
+					tool_manager_edit.equipments_on_grid_[idx]->label != FILTER_B)
+				{
+					if(tool_manager_edit.equipments_on_grid_[idx]->label == LASER_SOURCE_U_RED)
+					{
+						int angle = (int)(tool_manager_edit.equipments_on_grid_[idx]->getRotation());
+						if(angle > 180)
+						{
+							angle = angle - 360;
+						}
+						sign = (char)((int)'0' + (angle/90 + 2));
+					}
+					else if(tool_manager_edit.equipments_on_grid_[idx]->label == DOOR_U_RED)
+					{
+						int angle = (int)(tool_manager_edit.equipments_on_grid_[idx]->getRotation());
+						if(angle == 0)
+						{
+							angle = 360;
+						}
+						sign = (char)((int)'0' + (angle/90 + 4));
+					}
+					else
+					{
+						sign = tool_manager_edit.equipments_on_grid_[idx]->label;
+					}
+				}
+			}
+			layoutFile << sign;
+			if(j != 14)
+			{
+				layoutFile << ',';
+			}
+		}
+		if(i != 11)
+		{
+			layoutFile << '\n';
+		}
+	}
+	layoutFile.close();
+	// save level_info into txt
+	std::ofstream infoFile;
+	infoFile.open(infoFileName);
+	infoFile << 0 << "\n"; // dummy level label
+	infoFile << 0 << "\n"; // dummy islock info
+	infoFile << 0 << "\n"; // initial best score;
+	infoFile << twoStarScore << "\n"; // 2 stars threshold
+	infoFile << threeStarScore << "\n"; // 3 stars threshold
+	infoFile << initMoney; // initial money
+	infoFile.close();
+	
+	// save level available equipments into txt
+	std::ofstream equipFile;
+	equipFile.open(equipFileName);
+	std::map<int, int>::iterator equipIt = tool_manager_edit.equipAvalibility.begin();
+	for(; equipIt != tool_manager_edit.equipAvalibility.end(); equipIt++)
+	{
+		if(equipIt->second == 1)
+		{
+			equipFile << tool_manager_edit.equipmentLabel[equipIt->first] << "\n";
+		}
+	}
+	equipFile.close();
+	
+	std::ofstream level_name;
+	level_name.open("UserLevel/level_names.txt", std::ios::app);
+	level_name << levelName << std::endl;
+	level_name.close();
 }

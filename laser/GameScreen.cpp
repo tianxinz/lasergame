@@ -13,10 +13,14 @@
 #include "Target.h"
 #include "LevelSelectScreen.h"
 #include "LevelManager.h"
+#include "MenuScreen.h"
+#include "Splitter.h"
 
 
 int curr_level = 1;
 int currentScore  = 0;
+std::string user_curr_level = "";
+
 void my_callBack_goBack()
 {
 	Game::Screen = std::make_shared<LevelSelectScreen>();
@@ -29,9 +33,15 @@ void my_callBack_clear()
 	Game::Screen = std::make_shared<GameScreen>();
 }
 
+void my_callBack_next()
+{
+	curr_level++;
+	Game::Screen = std::make_shared<GameScreen>();
+}
+
 void my_callBack_replay()
 {
-	curr_level--;
+	//curr_level--;
 	Game::Screen = std::make_shared<GameScreen>();
 }
 
@@ -41,7 +51,7 @@ GameScreen::GameScreen()
 	//put all the equipments needed in this level.
 	goBackButton.callBack = &my_callBack_goBack;
 	clearButton.callBack = &my_callBack_clear;
-	nextLevelButton.callBack = &my_callBack_clear;
+	nextLevelButton.callBack = &my_callBack_next;
 	replayButton.callBack = &my_callBack_replay;
 
 	goBackButton.setPosition(300, 520);
@@ -57,7 +67,7 @@ GameScreen::GameScreen()
 	}
 	buttonManager_end.addButton("replay",std::make_shared<UserButton> (replayButton));
 
-
+	Splitter::loadTexture();
 	Mirror::loadTexture();
 	LaserSource::loadTexture();
 	Target::loadTexture();
@@ -67,12 +77,25 @@ GameScreen::GameScreen()
 	allHit = 0;
 	renderCount = 0;
 	LevelManager * level_manager = LevelManager::getInstance();
-	char numStr[10] = {};
-	itoa(curr_level, numStr, 10);
-	std::string num = std::string(numStr);
-	std::string levelKey = "level";
-	levelKey += num;
+	std::string levelKey = "";
+	if(load_mode == 0)
+	{
+		char numStr[10] = {};
+		itoa(curr_level, numStr, 10);
+		std::string num = std::string(numStr);
+		levelKey = "level";
+		levelKey += num;
+	}
+	else
+	{
+		levelKey = "userlevel" + user_curr_level;
+	}
 	currentScore = level_manager->levelMap[levelKey].getInitialScore();
+	if(!background.loadFromFile("Background/GameScreen.jpg"))
+	{
+		std::cout<< "load game screen background fail!"	<<std::endl;
+	}
+	backgroundSp.setTexture(background);
 }
 
 void GameScreen::handleInput(sf::RenderWindow& window)
@@ -88,6 +111,11 @@ void GameScreen::handleInput(sf::RenderWindow& window)
 		if(renderCount == 1)
 		{
 			LevelManager *level_manager = LevelManager::getInstance();
+			std::map<int, std::shared_ptr<Equipment>> :: iterator it = GameScreen::tool_manager.equipments_on_grid_move_.begin();
+			for(; it != GameScreen::tool_manager.equipments_on_grid_move_.end(); it++)
+			{
+				currentScore -= it->second->cost;
+			}
 			level_manager->saveLevelInfo(curr_level-1, currentScore);
 		}
 		if(renderCount > 150)
@@ -99,6 +127,7 @@ void GameScreen::handleInput(sf::RenderWindow& window)
 
 void GameScreen::render(sf::RenderWindow& window)
 {
+	window.draw(backgroundSp);
 	buttonManager_game.render(window);
 	drawGrid(window);
 	drawEquitment(window);
@@ -125,6 +154,7 @@ void GameScreen::handleLaser()
 {
 	// if the changed equipment is on the previous light path, from that position on, the following photon sprite will be erased
 	// otherwise no photon will be removed
+	/*
 	if(tool_manager.changeIdx >= 0)
 	{	
 		
@@ -141,23 +171,36 @@ void GameScreen::handleLaser()
 			}
 		}
 		
-		// calculate the light paths from the last photon in each light path
+		 calculate the light paths from the last photon in each light path
 		calculatePath();
 		tool_manager.changeIdx = -1;
 	}
+	*/
+	calculatePath();
 }
 
 void GameScreen::loadGrid()
 {
 	std::string* text;
-	std::string level_name = "Level/level_";
+	std::string level_name;
+	if(load_mode == 0)
+	{
+		level_name = "Level/level_";
 
-	char intStr[10] = {};
-	itoa(curr_level, intStr,10);
-	std::string str = std::string(intStr);
+		char intStr[10] = {};
+		itoa(curr_level, intStr,10);
+		std::string str = std::string(intStr);
 
-	level_name += str;
-	level_name += ".txt";
+		level_name += str;
+		level_name += ".txt";
+	}
+
+	if(load_mode == 1)
+	{
+		level_name = "UserLevel/" + user_curr_level;
+		level_name += ".txt";
+
+	}
 
 	const char* txt_name = level_name.c_str();
 
@@ -183,25 +226,36 @@ void GameScreen::drawGrid(sf::RenderWindow& window)
 void GameScreen::loadEquipment()
 {
 	std::string* text_equipment;
-	std::string level_name = "Level/level_equipment_";
+	std::string level_name; 
+	if(load_mode == 0)
+	{
+		level_name	= "Level/level_equipment_";
 
-	char intStr[10] = {};
-	itoa(curr_level, intStr,10);
-	std::string str = std::string(intStr);
+		char intStr[10] = {};
+		itoa(curr_level, intStr,10);
+		std::string str = std::string(intStr);
 
-	level_name += str;
-	level_name += ".txt";
+		level_name += str;
+		level_name += ".txt";
+	}
+
+	if(load_mode == 1)
+	{
+		level_name = "UserLevel/"+ user_curr_level;
+		level_name += "_equipment.txt";
+
+	}
 
 	const char* txt_name = level_name.c_str();
 
-	text_equipment = loadEquipmentTXT("Level/level_equipment_1.txt");
+	text_equipment = loadEquipmentTXT(txt_name);
 	int i=0;
 
 	while(!text_equipment[i].empty())
 	{
 		switch( text_equipment[i][0] )
 		{
-		    case '1' : 
+		    case MIRROR : 
 				{
 
 					if(tool_manager.equipments_.count("mirror")==0)
@@ -214,15 +268,15 @@ void GameScreen::loadEquipment()
 					}
 					break;
 				}
-			case '2' :
+			case SPLITTER :
 				{
 
-					if(tool_manager.equipments_.count("target")==0)
+					if(tool_manager.equipments_.count("splitter")==0)
 					{
-						Target target;
-						target.setPosition(700,200);
-						tool_manager.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("target", std::make_shared<Target>(target)));
-						tool_manager.equipments_.at("target")->setTexture(Target::tTexture);
+						Splitter splitter;
+						splitter.setPosition(700,200);
+						tool_manager.equipments_.insert(std::pair<std::string, std::shared_ptr<Equipment>>("splitter", std::make_shared<Splitter>(splitter)));
+						tool_manager.equipments_.at("splitter")->setTexture(Splitter::sTexture);
 						i++;
 					}
 					break;
@@ -265,13 +319,12 @@ std::string* loadEquipmentTXT(const char* fileName)
 }
 
 void GameScreen::calculatePath()
-{
-	
+{ 
+	lightPaths.clear();
 	for(int i = 0; i != GameScreen::tool_manager.my_targets_.size(); i++)
 	{
 		GameScreen::tool_manager.my_targets_[i]->lightOff();
 	}
-	
 	sf::FloatRect windowRect(MARGIN, MARGIN, GRID_WIDTH*(BLOCK_SIZE), GRID_HEIGHT*(BLOCK_SIZE));
 	if(lightPaths.size() == 0)
 	{
@@ -316,8 +369,7 @@ void GameScreen::calculatePath()
 	bool isAllHit = true;
 	for(int i = 0; i != GameScreen::tool_manager.my_targets_.size(); i++)
 	{
-		//std::cout<<"target:ishit "<<GameScreen::tool_manager.my_targets_[0]->isHit()<<std::endl;
-		if(!GameScreen::tool_manager.my_targets_[0]->isHit())
+		if(!GameScreen::tool_manager.my_targets_[i]->isHit())
 		{
 			isAllHit = false;
 			break;
@@ -327,7 +379,7 @@ void GameScreen::calculatePath()
 	{
 		//std::cout<<"come into isAllHit"<<std::endl;
 		allHit = 1;
-		curr_level ++;
+		//curr_level ++;
 	}
 }
 

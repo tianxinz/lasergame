@@ -9,6 +9,7 @@ class Equipment : public sf::Sprite
 {
 public:
 	int cost;
+	char label;
 	Equipment();
 	virtual void reaction(Photon& photon, std::vector<std::vector<Photon>>& lightPaths) = 0;
 	virtual void myRotate() = 0;
